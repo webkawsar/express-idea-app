@@ -1,0 +1,17 @@
+<div class="card mb-1">
+  {{! <img src="..." class="card-img-top" alt="..." /> }}
+  <div class="card-body">
+
+    <h5 class="card-title">{{idea.title}}</h5>
+    <div class="card-text">{{{idea.description}}} </div>
+
+    <a
+      href="/ideas/{{idea.id}}/edit"
+      class="btn btn-primary float-start me-3"
+    >Edit</a>
+
+    <form action="/ideas/{{idea.id}}?_method=DELETE" method="POST">
+      <button class="btn btn-danger">Delete</button>
+    </form>
+  </div>
+</div>

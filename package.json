@@ -14,5 +14,14 @@
     "nodemon": "^2.0.15",
     "prettier": "^2.6.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "express": "^4.17.3",
+    "express-handlebars": "^5.3.0",
+    "lodash": "^4.17.21",
+    "method-override": "^3.0.0"
+  },
+  "scripts": {
+    "start": "node index",
+    "dev": "nodemon index"
+  }
 }

@@ -1,0 +1,47 @@
+<form action="/ideas/{{idea.id}}?_method=PUT" method="POST">
+  <div class="mb-3">
+    <label for="title" class="form-label">Title</label>
+    <input
+      type="text"
+      name="title"
+      class="form-control"
+      id="title"
+      value="{{idea.title}}"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea
+      class="form-control"
+      name="description"
+      id="description"
+      rows="6"
+    >
+    {{idea.description}}
+    </textarea>
+  </div>
+
+  <select class="form-select mb-4" name="status">
+    <option>Status</option>
+    <option value="public" 
+      {{ compareValues 'public' idea.status }}
+    >Public</option>
+    <option value="private" {{ compareValues idea.status 'private'}}>Private</option>
+  </select>
+
+  <div class="mb-3 form-check">
+    <input
+      type="checkbox"
+      name="allowComments"
+      class="form-check-input"
+      id="allowComments"
+      {{#if idea.allowComments}}
+      checked
+      {{/if}}
+    />
+    <label class="form-check-label" for="allowComments">Allow comments</label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Update Idea</button>
+</form>
