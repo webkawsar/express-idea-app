@@ -4,6 +4,7 @@ const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const path = require('path');
 const mongoose = require('mongoose');
+const { check, validationResult } = require('express-validator');
 const { compareValues, truncateText } = require('./helpers');
 
 // Schema
@@ -72,14 +73,18 @@ app.get('/ideas/new', (req, res) => {
 });
 
 // Get Single Idea
+// eslint-disable-next-line consistent-return
 app.get('/ideas/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).render('notFound', { title: 'Not found' });
+    }
 
+    try {
         let idea = await Idea.findById(id);
-        idea = generateIdeaDoc(idea);
 
         if (idea) {
+            idea = generateIdeaDoc(idea);
             res.render('ideas/show', { title: idea.title, idea });
         } else {
             res.status(404).render('notFound', { title: 'Not found' });
@@ -90,13 +95,17 @@ app.get('/ideas/:id', async (req, res) => {
 });
 
 // Get edit idea form
+// eslint-disable-next-line consistent-return
 app.get('/ideas/:id/edit', async (req, res) => {
-    try {
-        const { id } = req.params;
-        let idea = await Idea.findById(id);
-        idea = generateIdeaDoc(idea);
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).render('notFound', { title: 'Not found' });
+    }
 
+    try {
+        let idea = await Idea.findById(id);
         if (idea) {
+            idea = generateIdeaDoc(idea);
             res.render('ideas/edit', { title: idea.title, idea });
         } else {
             res.status(404).render('notFound', { title: 'Not found' });
@@ -107,46 +116,137 @@ app.get('/ideas/:id/edit', async (req, res) => {
 });
 
 // create Idea
-app.post('/ideas', async (req, res) => {
-    try {
+app.post(
+    '/ideas',
+    check('title')
+        .notEmpty()
+        .withMessage('Title is required')
+        .trim()
+        .isLength({ min: 3, max: 30 })
+        .withMessage('Please provide title between 3 to 30 char'),
+
+    check('description')
+        .notEmpty()
+        .withMessage('Description is required')
+        .trim()
+        .isLength({ min: 3, max: 10000 })
+        .withMessage('Please provide description between 3 to 10000 char'),
+
+    check('status')
+        .notEmpty()
+        .withMessage('Please select status')
+        .isIn(['public', 'private'])
+        .withMessage('Please select status public or private'),
+
+    // eslint-disable-next-line consistent-return
+    async (req, res) => {
+        const errors = validationResult(req);
         const allowComments = !!req.body.allowComments;
-        req.body.allowComments = allowComments;
 
-        const idea = new Idea({ ...req.body });
-        await idea.save();
+        if (!errors.isEmpty()) {
+            const ideaInput = {
+                title: req.body.title,
+                description: req.body.description,
+                status: req.body.status,
+                allowComments,
+            };
+            return res.render('ideas/new', {
+                title: 'Add New Idea',
+                idea: ideaInput,
+                errMsg: errors.array()[0].msg,
+            });
+        }
 
-        // redirect user
-        res.redirect('/ideas');
-    } catch (error) {
-        res.status(500).render('error');
+        try {
+            req.body.allowComments = allowComments;
+            const idea = new Idea({ ...req.body });
+            await idea.save();
+
+            // redirect user
+            res.redirect('/ideas');
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).render('error');
+        }
+        // eslint-disable-next-line comma-dangle
     }
-});
+);
 
 // update idea
-app.put('/ideas/:id', async (req, res) => {
-    try {
+app.put(
+    '/ideas/:id',
+    [
+        check('title')
+            .notEmpty()
+            .withMessage('Title is required')
+            .trim()
+            .isLength({ min: 3, max: 30 })
+            .withMessage('Please provide title between 3 to 30 char'),
+
+        check('description')
+            .notEmpty()
+            .withMessage('Description is required')
+            .trim()
+            .isLength({ min: 3, max: 10000 })
+            .withMessage('Please provide description between 3 to 10000 char'),
+
+        check('status')
+            .notEmpty()
+            .withMessage('Please select status')
+            .isIn(['public', 'private'])
+            .withMessage('Please select status public or private'),
+    ],
+    // eslint-disable-next-line consistent-return
+    async (req, res) => {
         const { id } = req.params;
         const allowComments = !!req.body.allowComments;
         req.body.allowComments = allowComments;
 
         // update value
         const pickedValue = _.pick(req.body, ['title', 'description', 'status', 'allowComments']);
-        const idea = await Idea.findByIdAndUpdate(id, pickedValue);
 
-        if (idea) {
-            res.redirect(`/ideas/${id}`);
-        } else {
-            res.status(404).render('notFound', { title: 'Not found' });
+        const errors = validationResult(req);
+        console.log(errors.array(), 'errors.array()');
+
+        if (!errors.isEmpty()) {
+            const ideaInput = {
+                title: req.body.title,
+                description: req.body.description,
+                status: req.body.status,
+                allowComments,
+                _id: id,
+            };
+            return res.render('ideas/edit', {
+                title: 'Update Idea',
+                idea: ideaInput,
+                errMsg: errors.array()[0].msg,
+            });
         }
-    } catch (error) {
-        res.status(500).render('error');
-    }
-});
+
+        try {
+            const idea = await Idea.findByIdAndUpdate(id, pickedValue);
+
+            if (idea) {
+                res.redirect(`/ideas/${id}`);
+            } else {
+                res.status(404).render('notFound', { title: 'Not found' });
+            }
+        } catch (error) {
+            res.status(500).render('error');
+        }
+        // eslint-disable-next-line prettier/prettier
+    },
+);
 
 // delete idea
+// eslint-disable-next-line consistent-return
 app.delete('/ideas/:id', async (req, res) => {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).render('notFound', { title: 'Not found' });
+    }
+
     try {
-        const { id } = req.params;
         const idea = await Idea.findByIdAndDelete(id);
 
         if (idea) {

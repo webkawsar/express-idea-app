@@ -1,7 +1,11 @@
 <form action="/ideas" method="POSt">
   <div class="mb-3">
     <label for="title" class="form-label">Title</label>
-    <input type="text" name="title" class="form-control" id="title" />
+    <input type="text" name="title" class="form-control" id="title"
+      {{#if idea.title}}
+      value="{{idea.title}}"
+      {{/if}}
+     />
   </div>
 
   <div class="mb-3">
@@ -11,13 +15,17 @@
       name="description"
       id="description"
       rows="6"
-    ></textarea>
+    >
+      {{#if idea.description}}
+      {{idea.description}}
+      {{/if}}
+    </textarea>
   </div>
 
   <select class="form-select mb-4" name="status">
     <option selected>Status</option>
-    <option value="public">Public</option>
-    <option value="private">Private</option>
+    <option value="public" {{#if idea.status}} {{ compareValues 'public' idea.status }} {{/if}}>Public</option>
+    <option value="private" {{#if idea.status}} {{ compareValues 'private' idea.status }} {{/if}}>Private</option>
   </select>
 
   <div class="mb-3 form-check">
@@ -26,6 +34,9 @@
       name="allowComments"
       class="form-check-input"
       id="allowComments"
+      {{#if idea.allowComments}}
+      checked
+      {{/if}}
     />
     <label class="form-check-label" for="allowComments">Allow comments</label>
   </div>
