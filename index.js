@@ -3,7 +3,33 @@ const _ = require('lodash');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const path = require('path');
+const mongoose = require('mongoose');
 const { compareValues, truncateText } = require('./helpers');
+
+// Schema
+const Idea = require('./models/Idea');
+
+// Database connection
+const connectDB = async () => {
+    try {
+        await mongoose.connect('mongodb://localhost:27017/idea-app');
+        console.log('Database is connected');
+    } catch (error) {
+        console.log(`Database connection error: ${error.message}`);
+    }
+};
+
+connectDB();
+
+// Handle handlebars problem
+// eslint-disable-next-line object-curly-newline
+const generateIdeaDoc = ({ title, description, allowComments, status, _id }) => ({
+    title,
+    description,
+    allowComments,
+    status,
+    _id,
+});
 
 // App object
 const app = express();
@@ -17,30 +43,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: false }));
 
-let ideas = [
-    {
-        id: 1,
-        title: 'Sample Idea 1',
-        description: 'Sample Idea Description',
-        status: 'private',
-        allowComments: true,
-    },
-    {
-        id: 2,
-        title: 'Sample Idea 2',
-        description: 'Sample Idea 2 Description',
-        status: 'public',
-        allowComments: false,
-    },
-    {
-        id: 3,
-        title: 'Sample Idea 3',
-        description: 'Sample Idea 3 Description',
-        status: 'public',
-        allowComments: true,
-    },
-];
-
 // Routing
 app.get('/', (req, res) => {
     res.render('index', {
@@ -50,11 +52,18 @@ app.get('/', (req, res) => {
 });
 
 // Get All Ideas
-app.get('/ideas', (req, res) => {
-    res.render('ideas/index', {
-        title: 'All Ideas',
-        ideas,
-    });
+app.get('/ideas', async (req, res) => {
+    try {
+        const ideas = await Idea.find();
+        const generateIdea = ideas.map((idea) => generateIdeaDoc(idea));
+
+        res.render('ideas/index', {
+            title: 'All Ideas',
+            ideas: generateIdea,
+        });
+    } catch (error) {
+        res.status(500).render('error');
+    }
 });
 
 // Get Add Idea form
@@ -63,65 +72,90 @@ app.get('/ideas/new', (req, res) => {
 });
 
 // Get Single Idea
-app.get('/ideas/:id', (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    const idea = ideas.find((singleIdea) => singleIdea.id === id);
+app.get('/ideas/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
 
-    if (idea) {
-        res.render('ideas/show', { title: idea.title, idea });
-    } else {
-        res.render('notFound', { title: 'Not found' });
+        let idea = await Idea.findById(id);
+        idea = generateIdeaDoc(idea);
+
+        if (idea) {
+            res.render('ideas/show', { title: idea.title, idea });
+        } else {
+            res.status(404).render('notFound', { title: 'Not found' });
+        }
+    } catch (error) {
+        res.status(500).render('error');
     }
 });
 
 // Get edit idea form
-app.get('/ideas/:id/edit', (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    const idea = ideas.find((singleIdea) => singleIdea.id === id);
+app.get('/ideas/:id/edit', async (req, res) => {
+    try {
+        const { id } = req.params;
+        let idea = await Idea.findById(id);
+        idea = generateIdeaDoc(idea);
 
-    if (idea) {
-        res.render('ideas/edit', { title: idea.title, idea });
-    } else {
-        res.render('notFound', { title: 'Not found' });
+        if (idea) {
+            res.render('ideas/edit', { title: idea.title, idea });
+        } else {
+            res.status(404).render('notFound', { title: 'Not found' });
+        }
+    } catch (error) {
+        res.status(500).render('error');
     }
 });
 
 // create Idea
-app.post('/ideas', (req, res) => {
-    const allowComments = !!req.body.allowComments;
-    const idea = { ...req.body, allowComments, id: ideas.length + 1 };
-    ideas.push(idea);
+app.post('/ideas', async (req, res) => {
+    try {
+        const allowComments = !!req.body.allowComments;
+        req.body.allowComments = allowComments;
 
-    // redirect user
-    res.redirect('/ideas');
+        const idea = new Idea({ ...req.body });
+        await idea.save();
+
+        // redirect user
+        res.redirect('/ideas');
+    } catch (error) {
+        res.status(500).render('error');
+    }
 });
 
 // update idea
-app.put('/ideas/:id', (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    const findIdea = ideas.find((singleIdea) => singleIdea.id === id);
+app.put('/ideas/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const allowComments = !!req.body.allowComments;
+        req.body.allowComments = allowComments;
 
-    if (findIdea) {
-        // update idea
+        // update value
         const pickedValue = _.pick(req.body, ['title', 'description', 'status', 'allowComments']);
-        const updateIdea = { id, ...pickedValue };
-        ideas = ideas.map((idea) => (idea.id === id ? (idea = updateIdea) : idea));
-        res.redirect(`/ideas/${id}`);
-    } else {
-        res.render('notFound', { title: 'Not found' });
+        const idea = await Idea.findByIdAndUpdate(id, pickedValue);
+
+        if (idea) {
+            res.redirect(`/ideas/${id}`);
+        } else {
+            res.status(404).render('notFound', { title: 'Not found' });
+        }
+    } catch (error) {
+        res.status(500).render('error');
     }
 });
 
 // delete idea
-app.delete('/ideas/:id', (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    const idea = ideas.find((singleIdea) => singleIdea.id === id);
+app.delete('/ideas/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const idea = await Idea.findByIdAndDelete(id);
 
-    if (idea) {
-        ideas = ideas.filter((singleIdea) => singleIdea.id !== id);
-        res.redirect('/ideas');
-    } else {
-        res.render('notFound', { title: 'Not found' });
+        if (idea) {
+            res.redirect('/ideas');
+        } else {
+            res.status(404).render('notFound', { title: 'Not found' });
+        }
+    } catch (error) {
+        res.status(500).render('error');
     }
 });
 
