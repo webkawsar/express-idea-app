@@ -19,8 +19,8 @@ const ideaSchema = new mongoose.Schema(
             type: String,
             trim: true,
             required: [true, 'Description is required'],
-            minlength: [3, 'Please provide description at least 3 char'],
-            maxlength: [30, 'Please provide description max 10000 char'],
+            minlength: [10, 'Please provide description at least 3 char'],
+            maxlength: [10000, 'Please provide description max 10000 char'],
         },
         allowComments: {
             type: Boolean,
