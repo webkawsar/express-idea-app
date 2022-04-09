@@ -4,6 +4,7 @@ const methodOverride = require('method-override');
 const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const passport = require('passport');
 const { compareValues, truncateText } = require('./helpers');
 
 // config
@@ -15,6 +16,8 @@ const authRoute = require('./routes/auth');
 
 // middleware
 const errorMiddleware = require('./middleware/errorMiddleware');
+// require('./config/passport')(passport);
+const localStrategy = require('./config/passport');
 
 // Database connection
 connectDB();
@@ -27,6 +30,7 @@ app.engine('.hbs', exphbs({ extname: '.hbs', helpers: { compareValues, truncateT
 app.set('view engine', '.hbs');
 
 // Middleware
+
 app.use(
     session({
         secret: 'This is secret key',
@@ -41,9 +45,12 @@ app.use(
     })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+localStrategy(passport);
+
 app.use((req, res, next) => {
-    res.locals.user = req.session?.user ? req.session.user : null;
-    // console.log(req.session?.user, 'req.session.user');
+    res.locals.user = req?.user ? req.user : null;
     next();
 });
 
