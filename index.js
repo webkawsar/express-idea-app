@@ -5,6 +5,7 @@ const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
+const flash = require('connect-flash');
 const { compareValues, truncateText } = require('./helpers');
 
 // config
@@ -44,13 +45,14 @@ app.use(
         },
     })
 );
-
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 localStrategy(passport);
 
 app.use((req, res, next) => {
     res.locals.user = req?.user ? req.user : null;
+    res.locals.success_msg = req.flash('success_msg');
     next();
 });
 

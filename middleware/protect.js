@@ -1,5 +1,5 @@
 const protect = (req, res, next) => {
-    if (req.session.isLoggedIn) {
+    if (req.isAuthenticated()) {
         next();
     } else {
         res.redirect('/auth/login');

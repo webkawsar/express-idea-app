@@ -1,4 +1,3 @@
-const bcryptjs = require('bcryptjs');
 const User = require('../models/User');
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 
@@ -11,46 +10,23 @@ exports.create = asyncMiddleware(async (req, res) => {
     const user = new User({ ...req.body });
     await user.save();
 
+    req.flash('success_msg', 'Registration successful');
     // redirect to dashboard
-    res.redirect('/ideas');
+    res.redirect('/auth/login');
 });
 
 exports.loginForm = (req, res) => {
     res.render('auth/login', { title: 'Login for sharing your idea' });
 };
 
-// Manual login functionalities
-// exports.login = asyncMiddleware(async (req, res) => {
-//     // find email exists or not
-//     const user = await User.findOne({ email: req.body.email });
-//     if (user) {
-//         // if exists check password
-//         const isMatch = await bcryptjs.compare(req.body.password, user.password);
-//         if (isMatch) {
-//             req.session.isLoggedIn = true;
-//             req.session.user = user;
-//             res.redirect('/ideas');
-//         } else {
-//             res.render('auth/login', {
-//                 title: 'Login for sharing your idea',
-//                 errMsg: 'Invalid email or password',
-//             });
-//         }
-//     } else {
-//         res.render('auth/login', {
-//             title: 'Login for sharing your idea',
-//             errMsg: 'Invalid email or password',
-//         });
-//     }
-// });
-
 exports.login = (req, res) => {
-    console.log('Log in success');
+    req.flash('success_msg', 'Login successful');
     res.redirect('/ideas');
 };
 
 // Log out
-exports.logout = asyncMiddleware(async (req, res) => {
-    await req.session.destroy();
+exports.logout = asyncMiddleware((req, res) => {
+    req.logout();
+    req.flash('success_msg', 'Logout successful');
     res.redirect('/auth/login');
 });

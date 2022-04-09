@@ -19,7 +19,6 @@ router.get('/register', authController.new);
 router.post('/register', registerValidator, registerValidationResult, authController.create);
 
 router.get('/login', authController.loginForm);
-// router.post('/login', loginValidator, loginValidationResult, authController.login);
 router.post(
     '/login',
     loginValidator,
