@@ -2,12 +2,19 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const path = require('path');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const { compareValues, truncateText } = require('./helpers');
 
 // config
-const connectDB = require('./config/db');
+const { connectDB, databaseURL } = require('./config/db');
 // routes
 const ideasRoute = require('./routes/idea');
+const indexRoute = require('./routes/index');
+const authRoute = require('./routes/auth');
+
+// middleware
+const errorMiddleware = require('./middleware/errorMiddleware');
 
 // Database connection
 connectDB();
@@ -20,38 +27,37 @@ app.engine('.hbs', exphbs({ extname: '.hbs', helpers: { compareValues, truncateT
 app.set('view engine', '.hbs');
 
 // Middleware
+app.use(
+    session({
+        secret: 'This is secret key',
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({ mongoUrl: databaseURL }),
+        cookie: {
+            maxAge: 2 * 60 * 100 * 1000,
+            httpOnly: true,
+            sameSite: 'lax',
+        },
+    })
+);
+
+app.use((req, res, next) => {
+    res.locals.user = req.session?.user ? req.session.user : null;
+    // console.log(req.session?.user, 'req.session.user');
+    next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: false }));
-// Routing
-app.get('/', (req, res) => {
-    res.render('pages/index', {
-        title: 'Home Page',
-        text: 'Hello Node.js Programmer',
-    });
-});
 
-// ideas
+// auth
 app.use('/ideas', ideasRoute);
+app.use('/auth', authRoute);
+app.use('/', indexRoute);
 
-// about
-app.get('/about', (req, res) => {
-    res.render('pages/about', {
-        title: 'About us',
-        text: 'Know about us',
-    });
-});
-
-// handle not found route
-app.get('*', (req, res) => {
-    res.status(404).render('notFound');
-});
-
-// eslint-disable-next-line no-unused-vars
-app.use((error, req, res, next) => {
-    console.log(error);
-    res.status(500).render('error');
-});
+// Error handling middleware
+app.use(errorMiddleware);
 
 // Server listening
 app.listen(8080, () => {

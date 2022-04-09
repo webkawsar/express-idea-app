@@ -15,18 +15,44 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/ideas">Public
-            Ideas</a>
-        </li>
+        {{#if user}}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/ideas">Public
+              Ideas</a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/ideas/new">Add Idea</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/ideas/new">Add Idea</a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/logout">Log out</a>
+          </li>
+
+        {{else}}
+
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/ideas">Public
+              Ideas</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/login">Log in</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/register">Register</a>
+          </li>
+
+        {{/if}}
 
       </ul>
     </div>

@@ -39,7 +39,6 @@ const ideaSchema = new mongoose.Schema(
     },
     {
         versionKey: false,
-        // eslint-disable-next-line comma-dangle
     }
 );
 

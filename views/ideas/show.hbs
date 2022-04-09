@@ -5,13 +5,16 @@
     <h5 class="card-title">{{idea.title}}</h5>
     <div class="card-text">{{{idea.description}}} </div>
 
-    <a
-      href="/ideas/{{idea._id}}/edit"
-      class="btn btn-primary float-start me-3"
-    >Edit</a>
+    {{#if user}}
+      <a
+        href="/ideas/{{idea._id}}/edit"
+        class="btn btn-primary float-start me-3"
+      >Edit</a>
 
-    <form action="/ideas/{{idea._id}}?_method=DELETE" method="POST">
-      <button class="btn btn-danger">Delete</button>
-    </form>
+      <form action="/ideas/{{idea._id}}?_method=DELETE" method="POST">
+        <button class="btn btn-danger">Delete</button>
+      </form>
+    {{/if}}
+
   </div>
 </div>
