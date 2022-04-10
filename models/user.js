@@ -3,6 +3,7 @@ const bcryptjs = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
     {
+        googleID: String,
         firstName: {
             type: String,
             required: true,
@@ -49,6 +50,7 @@ const userSchema = new mongoose.Schema(
     },
     {
         versionKey: false,
+        timestamps: true,
     }
 );
 // eslint-disable-next-line func-names

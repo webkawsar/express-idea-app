@@ -57,7 +57,7 @@ exports.edit = async (req, res) => {
 exports.create = async (req, res) => {
     const idea = new Idea({ ...req.body });
     await idea.save();
-
+    req.flash('success_msg', 'Idea created successfully');
     // redirect user
     res.redirect('/ideas');
 };
@@ -70,6 +70,7 @@ exports.update = async (req, res) => {
     const idea = await Idea.findByIdAndUpdate(id, pickedValue);
 
     if (idea) {
+        req.flash('success_msg', 'Idea updated successfully');
         res.redirect(`/ideas/${id}`);
     } else {
         res.status(404).render('notFound', { title: 'Not found' });
@@ -86,6 +87,7 @@ exports.delete = async (req, res) => {
     const idea = await Idea.findByIdAndDelete(id);
 
     if (idea) {
+        req.flash('success_msg', 'Idea delete successfully');
         res.redirect('/ideas');
     } else {
         res.status(404).render('notFound', { title: 'Not found' });

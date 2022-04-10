@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-const databaseURL = 'mongodb://localhost:27017/idea-app';
+const URL = process.env.LOCAL_DB;
 const connectDB = async () => {
     try {
-        await mongoose.connect(databaseURL);
+        await mongoose.connect(URL);
         console.log('Database is connected');
     } catch (error) {
         console.log(`Database connection error: ${error.message}`);
     }
 };
 
-module.exports = { connectDB, databaseURL };
+module.exports = { connectDB, URL };

@@ -18,6 +18,7 @@ const protect = require('../middleware/protect');
 router.get('/register', authController.new);
 router.post('/register', registerValidator, registerValidationResult, authController.create);
 
+// Passport local
 router.get('/login', authController.loginForm);
 router.post(
     '/login',
@@ -25,10 +26,22 @@ router.post(
     loginValidationResult,
     passport.authenticate('local', {
         failureRedirect: '/auth/login',
+        failureFlash: true,
     }),
     authController.login
 );
 
+// Passport Google login
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get(
+    '/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/auth/login',
+        failureFlash: true,
+    }),
+    authController.login
+);
+// logout
 router.get('/logout', protect, authController.logout);
 
 module.exports = router;
