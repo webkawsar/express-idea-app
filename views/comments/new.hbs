@@ -1,0 +1,32 @@
+<form action="/ideas/{{idea._id}}/comments" method="POST">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Add a comment {{idea.title}}</h5>
+      <input
+        type="text"
+        class="form-control mb-2 mt-4"
+        name="title"
+        placeholder="Comment of your title"
+        {{#if comment}}
+        value="{{comment.title}}"
+        {{/if}}
+      />
+
+      <textarea
+        name="text"
+        class="form-control"
+        cols="30"
+        rows="5"
+        placeholder="Write more..."
+      >
+      {{#if comment}}
+        {{comment.text}}
+        {{/if}}
+      </textarea>
+
+      <a href="/ideas/{{idea._id}}" class="btn btn-info mt-4">Back to idea</a>
+      <button type="submit" class="btn btn-primary mt-4">Add a comment</button>
+    </div>
+  </div>
+
+</form>

@@ -1,20 +1,98 @@
-<div class="card mb-1">
-  {{! <img src="..." class="card-img-top" alt="..." /> }}
-  <div class="card-body">
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-8">
+      {{! <img src="..." class="img-fluid rounded-start" alt="..."> }}
+      <div class="card-body">
 
-    <h5 class="card-title">{{idea.title}}</h5>
-    <div class="card-text">{{{idea.description}}} </div>
+        <h5 class="card-title">{{idea.title}}</h5>
+        <div class="card-text">{{{idea.description}}} </div>
 
-    {{#if user}}
-      <a
-        href="/ideas/{{idea._id}}/edit"
-        class="btn btn-primary float-start me-3"
-      >Edit</a>
+        {{#if user}}
+          <a
+            href="/ideas/{{idea._id}}/edit"
+            class="btn btn-primary float-start me-3"
+          >Edit</a>
 
-      <form action="/ideas/{{idea._id}}?_method=DELETE" method="POST">
-        <button class="btn btn-danger">Delete</button>
-      </form>
-    {{/if}}
+          <form action="/ideas/{{idea._id}}?_method=DELETE" method="POST">
+            <button class="btn btn-danger">Delete</button>
+          </form>
+        {{/if}}
+      </div>
+    </div>
+    <div class="col-md-4 text-end">
+      <div class="card-body">
+        <label for="tags">Tags: </label>
+        {{#each idea.tags}}
+          <a
+            href="/"
+            style="text-decoration: none;"
+            class="badge bg-primary"
+          >{{this}}</a>
+        {{/each}}
+
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <small class="text-muted">Last updated
+      {{moment idea.updatedAt "MM-DD-YYYY"}}
+      ago</small>
 
   </div>
 </div>
+
+{{#if user}}
+  {{#if idea.allowComments}}
+    <div class="card mb-1">
+      <a href="/ideas/{{idea._id}}/comments/new" class="btn btn-info">Add a
+        Comment</a>
+    </div>
+  {{else}}
+    <div class="card mb-1">
+      <div class="card-body">
+        <div class="card-text text-center text-muted">Comments are not allowed </div>
+      </div>
+    </div>
+  {{/if}}
+  
+{{else}}
+  <div class="card mb-1">
+    <div class="card-body">
+      <div class="card-text text-center">Please login to add a comment</div>
+    </div>
+  </div>
+{{/if}}
+
+{{#each idea.comments}}
+  <div class="card mb-1">
+    <div class="card-body">
+      <blockquote class="blockquote mb-0">
+        <p>{{title}}</p>
+
+        <footer class="blockquote-footer">{{text}}
+          {{! <cite title="Source Title">Source Title</cite> }}
+        </footer>
+
+        {{#if ../user}}
+        {{!-- <a
+          href="/ideas/{{../idea._id}}/comments/{{_id}}/edit"
+          class="btn btn-primary float-start me-3"
+        >Edit</a> --}}
+
+        <form
+          action="/ideas/{{../idea._id}}/comments/{{_id}}?_method=DELETE"
+          method="POST"
+        >
+          <button class="btn btn-danger">Delete</button>
+        </form>
+        {{/if}}
+      </blockquote>
+    </div>
+  </div>
+{{else}}
+  <div class="card">
+    <div class="card-body">
+      <div class="card-text text-center text-muted">No comments to show </div>
+    </div>
+  </div>
+{{/each}}

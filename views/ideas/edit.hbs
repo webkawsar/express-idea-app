@@ -30,6 +30,15 @@
     <option value="private" {{ compareValues idea.status 'private'}}>Private</option>
   </select>
 
+  <div class="mb-3">
+    <label for="tags" class="form-label">Tags</label>
+    <input type="text" name="tags" class="form-control" id="tags" data-role="tagsinput" 
+      {{#if idea.tags}}
+      value="{{idea.tags}}"
+      {{/if}}
+    />
+  </div>
+
   <div class="mb-3 form-check">
     <input
       type="checkbox"
@@ -43,5 +52,6 @@
     <label class="form-check-label" for="allowComments">Allow comments</label>
   </div>
 
+  <button disabled style="display: none;" type="submit">Update Idea</button>
   <button type="submit" class="btn btn-primary">Update Idea</button>
 </form>

@@ -13,6 +13,8 @@ const localStrategy = (passport) => {
 
             // eslint-disable-next-line consistent-return
             async (email, password, next) => {
+                let isMatch = false;
+
                 try {
                     // check user by email
                     const user = await User.findOne({ email });
@@ -21,8 +23,11 @@ const localStrategy = (passport) => {
                         return next(null, false, { message: 'Invalid email or password' });
                     }
 
-                    // checking password and compare password
-                    const isMatch = await bcryptjs.compare(password, user.password);
+                    if (user.password) {
+                        // checking password and compare password
+                        isMatch = await bcryptjs.compare(password, user.password);
+                    }
+
                     if (isMatch) {
                         return next(null, user, { message: 'Logged in successfully' });
                     }

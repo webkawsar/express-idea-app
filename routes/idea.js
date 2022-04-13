@@ -2,13 +2,10 @@ const express = require('express');
 
 const router = express.Router();
 const {
-    addIdeaValidator,
+    ideaValidator,
     addIdeaValidationResult,
-} = require('../middleware/validators/addIdeaValidator');
-const {
-    editIdeaValidator,
     editValidationResult,
-} = require('../middleware/validators/editIdeaValidator');
+} = require('../middleware/validators/ideaValidator');
 
 // Controller
 const ideaController = require('../controllers/ideaController');
@@ -28,10 +25,10 @@ router.get('/:id', ideaController.getSingle);
 router.get('/:id/edit', protect, ideaController.edit);
 
 // create Idea
-router.post('/', protect, addIdeaValidator, addIdeaValidationResult, ideaController.create);
+router.post('/', [protect, ideaValidator, addIdeaValidationResult], ideaController.create);
 
 // update idea
-router.put('/:id', protect, editIdeaValidator, editValidationResult, ideaController.update);
+router.put('/:id', [protect, ideaValidator, editValidationResult], ideaController.update);
 
 // delete idea
 router.delete('/:id', protect, ideaController.delete);

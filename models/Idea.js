@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// const { commentSchema } = require('./Comment');
 
 const ideaSchema = new mongoose.Schema(
     {
@@ -36,11 +37,62 @@ const ideaSchema = new mongoose.Schema(
             trim: true,
             lowercase: true,
         },
+        // tags: {
+        //     // type: Array,
+        //     type: [String],
+        //     required: true,
+        //     trim: true,
+        //     validate: {
+        //         validator(v) {
+        //             return v[0].length > 0;
+        //         },
+        //         message: 'Idea must have one tag',
+        //     },
+        // },
+        tags: [
+            {
+                type: String,
+                required: [true, 'Idea must have one tag'],
+            },
+        ],
+        // comments: [
+        //     {
+        //         title: {
+        //             type: String,
+        //             required: true,
+        //             maxlength: 100,
+        //             trim: true,
+        //         },
+        //         text: {
+        //             type: String,
+        //             required: true,
+        //             maxlength: 1000,
+        //             trim: true,
+        //         },
+        //     },
+        // ],
+        // comments: [commentSchema],
+        // comments: [
+        //     {
+        //         type: mongoose.Schema.Types.ObjectId,
+        //         ref: 'Comment',
+        //     },
+        // ],
     },
     {
         versionKey: false,
+        timestamps: true,
+        toObject: {
+            virtuals: true,
+        },
     }
 );
+ideaSchema.virtual('comments', {
+    ref: 'Comment',
+    localField: '_id',
+    foreignField: 'idea',
+    justOne: false,
+});
 
 const Idea = mongoose.model('Idea', ideaSchema);
 module.exports = Idea;

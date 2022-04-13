@@ -8,6 +8,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const flash = require('connect-flash');
 require('express-async-errors');
+const moment = require('moment');
 const { compareValues, truncateText } = require('./helpers');
 
 // config
@@ -16,6 +17,7 @@ const { connectDB, URL } = require('./config/db');
 const ideasRoute = require('./routes/idea');
 const indexRoute = require('./routes/index');
 const authRoute = require('./routes/auth');
+const commentRoute = require('./routes/comment');
 
 // middleware
 const errorMiddleware = require('./middleware/errorMiddleware');
@@ -29,9 +31,20 @@ connectDB();
 const app = express();
 
 // app.engine('handlebars', exphbs);
-app.engine('.hbs', exphbs({ extname: '.hbs', helpers: { compareValues, truncateText } }));
+app.engine(
+    '.hbs',
+    exphbs({
+        extname: '.hbs',
+        helpers: {
+            compareValues,
+            truncateText,
+            moment(date) {
+                return moment(date).toNow();
+            },
+        },
+    })
+);
 app.set('view engine', '.hbs');
-
 // Middleware
 
 app.use(
@@ -66,8 +79,10 @@ app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: false }));
 
 // auth
-app.use('/ideas', ideasRoute);
 app.use('/auth', authRoute);
+app.use('/ideas', ideasRoute);
+app.use('/ideas/:id/comments', commentRoute);
+
 app.use('/', indexRoute);
 
 // Error handling middleware

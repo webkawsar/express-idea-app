@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 const Idea = require('../models/Idea');
 const generateIdeaDoc = require('../helpers/ideaDoc');
+const generateCommentDoc = require('../helpers/commentDoc');
 
 // Get All Ideas
 exports.getAll = async (req, res) => {
@@ -26,14 +27,14 @@ exports.getSingle = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).render('notFound', { title: 'Not found' });
     }
-    let idea = await Idea.findById(id);
+    let idea = await Idea.findById(id).populate('comments');
+    if (!idea) return res.status(404).render('notFound', { title: 'Not found' });
 
-    if (idea) {
-        idea = generateIdeaDoc(idea);
-        res.render('ideas/show', { title: idea.title, idea });
-    } else {
-        res.status(404).render('notFound', { title: 'Not found' });
+    idea = generateIdeaDoc(idea);
+    if (idea.comments) {
+        idea.comments = idea.comments.map((comment) => generateCommentDoc(comment));
     }
+    res.render('ideas/show', { title: idea.title, idea });
 };
 
 // Get Edit Idea Form
@@ -66,7 +67,13 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
     const { id } = req.params;
     // update value
-    const pickedValue = _.pick(req.body, ['title', 'description', 'status', 'allowComments']);
+    const pickedValue = _.pick(req.body, [
+        'title',
+        'description',
+        'status',
+        'allowComments',
+        'tags',
+    ]);
     const idea = await Idea.findByIdAndUpdate(id, pickedValue);
 
     if (idea) {
