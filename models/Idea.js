@@ -9,12 +9,6 @@ const ideaSchema = new mongoose.Schema(
             trim: true,
             minlength: [3, 'Please provide title at least 3 char'],
             maxlength: [30, 'Please provide title max 30 char'],
-            // set(v) {
-            //     return v.toLowerCase();
-            // },
-            // get(v) {
-            //     return v.toUpperCase();
-            // },
         },
         description: {
             type: String,
@@ -37,47 +31,21 @@ const ideaSchema = new mongoose.Schema(
             trim: true,
             lowercase: true,
         },
-        // tags: {
-        //     // type: Array,
-        //     type: [String],
-        //     required: true,
-        //     trim: true,
-        //     validate: {
-        //         validator(v) {
-        //             return v[0].length > 0;
-        //         },
-        //         message: 'Idea must have one tag',
-        //     },
-        // },
         tags: [
             {
                 type: String,
                 required: [true, 'Idea must have one tag'],
             },
         ],
-        // comments: [
-        //     {
-        //         title: {
-        //             type: String,
-        //             required: true,
-        //             maxlength: 100,
-        //             trim: true,
-        //         },
-        //         text: {
-        //             type: String,
-        //             required: true,
-        //             maxlength: 1000,
-        //             trim: true,
-        //         },
-        //     },
-        // ],
-        // comments: [commentSchema],
-        // comments: [
-        //     {
-        //         type: mongoose.Schema.Types.ObjectId,
-        //         ref: 'Comment',
-        //     },
-        // ],
+        user: {
+            _id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
+            firstName: String,
+            lastName: String,
+            email: String,
+        },
     },
     {
         versionKey: false,

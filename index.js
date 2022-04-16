@@ -9,7 +9,8 @@ const passport = require('passport');
 const flash = require('connect-flash');
 require('express-async-errors');
 const moment = require('moment');
-const { compareValues, truncateText } = require('./helpers');
+const { format } = require('date-fns');
+const { compareValues, truncateText, compareOwner } = require('./helpers');
 
 // config
 const { connectDB, URL } = require('./config/db');
@@ -38,8 +39,12 @@ app.engine(
         helpers: {
             compareValues,
             truncateText,
+            compareOwner,
             moment(date) {
                 return moment(date).toNow();
+            },
+            formatDate(date, dateFormat) {
+                return format(date, dateFormat);
             },
         },
     })
@@ -68,6 +73,8 @@ googleStrategy(passport);
 
 app.use((req, res, next) => {
     res.locals.user = req?.user ? req.user : null;
+    // eslint-disable-next-line no-underscore-dangle
+    res.locals.userId = req?.user ? req.user._id : null;
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error = req.flash('error');
     res.locals.error_msg = req.flash('error_msg');

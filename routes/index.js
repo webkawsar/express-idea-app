@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
     res.render('pages/index', {
         title: 'Home Page',
-        text: 'Hello Node.js Programmer',
+        text: 'Share Idea for better Future',
     });
 });
 

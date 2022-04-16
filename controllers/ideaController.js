@@ -56,7 +56,15 @@ exports.edit = async (req, res) => {
 
 // create Idea
 exports.create = async (req, res) => {
-    const idea = new Idea({ ...req.body });
+    const idea = new Idea({
+        ...req.body,
+        user: {
+            _id: req.user.id,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            email: req.user.email,
+        },
+    });
     await idea.save();
     req.flash('success_msg', 'Idea created successfully');
     // redirect user

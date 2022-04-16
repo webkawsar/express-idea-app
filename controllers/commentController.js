@@ -39,7 +39,16 @@ exports.create = async (req, res) => {
     const idea = await Idea.findById(id);
     if (!idea) return res.status(404).render('notFound', { title: 'Not found' });
 
-    const comment = new Comment({ ...req.body, idea: id });
+    const comment = new Comment({
+        ...req.body,
+        idea: id,
+        user: {
+            _id: req.user.id,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            email: req.user.email,
+        },
+    });
     await comment.save();
 
     // idea.comments.push(comment);

@@ -8,7 +8,10 @@ const truncateText = (text, length) => {
     return `${text.slice(0, length)}...`;
 };
 
+const compareOwner = (owner, loggedInUser) => (owner.equals(loggedInUser) ? 'block' : 'none');
+
 module.exports = {
     compareValues,
     truncateText,
+    compareOwner,
 };

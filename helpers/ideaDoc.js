@@ -10,6 +10,7 @@ const generateIdeaDoc = ({
     comments,
     tags,
     updatedAt,
+    user,
 }) => ({
     title,
     description,
@@ -19,6 +20,7 @@ const generateIdeaDoc = ({
     comments,
     tags,
     updatedAt,
+    user,
 });
 
 module.exports = generateIdeaDoc;

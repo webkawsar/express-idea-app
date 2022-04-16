@@ -6,6 +6,7 @@ const {
     addIdeaValidationResult,
     editValidationResult,
 } = require('../middleware/validators/ideaValidator');
+const checkIdeaOwnership = require('../middleware/checkIdeaOwnership');
 
 // Controller
 const ideaController = require('../controllers/ideaController');
@@ -22,15 +23,19 @@ router.get('/new', protect, ideaController.new);
 router.get('/:id', ideaController.getSingle);
 
 // Get edit idea form
-router.get('/:id/edit', protect, ideaController.edit);
+router.get('/:id/edit', [protect, checkIdeaOwnership], ideaController.edit);
 
 // create Idea
 router.post('/', [protect, ideaValidator, addIdeaValidationResult], ideaController.create);
 
 // update idea
-router.put('/:id', [protect, ideaValidator, editValidationResult], ideaController.update);
+router.put(
+    '/:id',
+    [protect, checkIdeaOwnership, ideaValidator, editValidationResult],
+    ideaController.update
+);
 
 // delete idea
-router.delete('/:id', protect, ideaController.delete);
+router.delete('/:id', [protect, checkIdeaOwnership], ideaController.delete);
 
 module.exports = router;

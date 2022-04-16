@@ -18,6 +18,15 @@ const commentSchema = new mongoose.Schema(
             maxlength: 1000,
             trim: true,
         },
+        user: {
+            _id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
+            firstName: String,
+            lastName: String,
+            email: String,
+        },
     },
     {
         versionKey: false,
