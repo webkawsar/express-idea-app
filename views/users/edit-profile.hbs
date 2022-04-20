@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-md-4">
+        {{> _dashboard-panel-left}}
+    </div>
+    <div class="col-md-8">
+        <h2 class="text-muted">Edit profile</h2>
+        <form action="/users/me?_method=PUT" method="POST">
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Firstname</label>
+                <input type="text" class="form-control" name="firstName" id="firstName" value="{{userInput.firstName}}">
+            </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Lastname</label>
+                <input type="text" class="form-control" name="lastName" id="lastName" value="{{userInput.lastName}}">
+            </div>
+
+            <div class="mb-3">
+                <label for="profile_pic" class="form-label">Profile picture</label>
+                <input name="profile_pic" class="form-control" type="file" id="profile_pic">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>

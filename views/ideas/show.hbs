@@ -19,8 +19,8 @@
           {{/each}}
         </div>
 
-        {{#if user}}
-          <div style="display: {{compareOwner idea.user._id userId}}">
+        {{#if loggedInUser}}
+          <div style="display: {{compareOwner idea.user._id loggedInUserId}}">
             <a
               href="/ideas/{{idea._id}}/edit"
               class="btn btn-primary float-start me-3"
@@ -37,7 +37,7 @@
     <div class="col-md-4 text-end d-flex align-items-center">
       <div class="card-body">
         
-        <p>Written By <strong>{{idea.user.firstName}}</strong></p>
+        <p>Written By <a href="/users/{{idea.user._id}}/ideas"><strong>{{idea.user.firstName}}</strong></a></p>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
 {{! Idea card ended }}
 
 {{! Comment Section Start }}
-{{#if user}}
+{{#if loggedInUser}}
   {{#if idea.allowComments}}
     <div class="card mb-1">
       <a href="/ideas/{{idea._id}}/comments/new" class="btn btn-info">Add a
@@ -87,8 +87,8 @@
         </footer>
       </blockquote>
 
-      {{#if ../user}}
-        <div style="display: {{compareOwner user._id ../userId}}">
+      {{#if ../loggedInUser}}
+        <div style="display: {{compareOwner user._id ../loggedInUserId}}">
             {{!-- <a href="/ideas/{{../idea._id}}/comments/{{_id}}/edit" class="btn btn-primary float-start me-3">Edit</a>
           --}}
 

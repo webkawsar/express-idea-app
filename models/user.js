@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
+const Idea = require('./Idea');
 
 const userSchema = new mongoose.Schema(
     {
@@ -51,6 +52,9 @@ const userSchema = new mongoose.Schema(
     {
         versionKey: false,
         timestamps: true,
+        toObject: {
+            virtuals: true,
+        },
     }
 );
 // eslint-disable-next-line func-names
@@ -62,6 +66,19 @@ userSchema.pre('save', async function (next) {
     } else {
         next();
     }
+});
+
+// get users ideas
+userSchema.virtual('ideas', {
+    ref: 'Idea',
+    localField: '_id',
+    foreignField: 'user._id',
+});
+
+userSchema.pre('remove', async function (next) {
+    const { id } = this;
+    await Idea.deleteMany({ 'user.id': id });
+    next();
 });
 
 const User = mongoose.model('User', userSchema);

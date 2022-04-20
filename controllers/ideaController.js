@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const Idea = require('../models/Idea');
-const generateIdeaDoc = require('../helpers/ideaDoc');
-const generateCommentDoc = require('../helpers/commentDoc');
+const generateIdeaDoc = require('../helpers/generateIdeaDoc');
+const generateCommentDoc = require('../helpers/generateCommentDoc');
 
 // Get All Ideas
 exports.getAll = async (req, res) => {
-    const ideas = await Idea.find();
+    const ideas = await Idea.find({ status: 'public' });
     const generateIdea = ideas.map((idea) => generateIdeaDoc(idea));
 
     res.render('ideas/index', {

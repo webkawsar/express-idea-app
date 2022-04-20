@@ -1,10 +1,24 @@
-{{#each ideas}}
-  <div class="card mb-1">
-    {{! <img src="..." class="card-img-top" alt="..." /> }}
-    <div class="card-body">
-      <h5 class="card-title">{{title}}</h5>
-      <div class="card-text">{{{truncateText description 300}}} </div>
-      <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
+{{#if userRef}}
+  <h2 class="text-muted mb-3">All Ideas by {{firstName}}</h2>
+  {{#each ideas}}
+    <div class="card mb-1">
+      {{! <img src="..." class="card-img-top" alt="..." /> }}
+      <div class="card-body">
+        <h5 class="card-title">{{title}}</h5>
+        <div class="card-text">{{{truncateText description 300}}} </div>
+        <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
+      </div>
     </div>
-  </div>
-{{/each}}
+  {{/each}}
+{{else}}
+  {{#each ideas}}
+    <div class="card mb-1">
+      {{! <img src="..." class="card-img-top" alt="..." /> }}
+      <div class="card-body">
+        <h5 class="card-title">{{title}}</h5>
+        <div class="card-text">{{{truncateText description 300}}} </div>
+        <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
+      </div>
+    </div>
+  {{/each}}
+{{/if}}

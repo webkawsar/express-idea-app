@@ -9,6 +9,7 @@ const generateIdeaDoc = ({
     _id,
     comments,
     tags,
+    createdAt,
     updatedAt,
     user,
 }) => ({
@@ -19,6 +20,7 @@ const generateIdeaDoc = ({
     _id,
     comments,
     tags,
+    createdAt,
     updatedAt,
     user,
 });

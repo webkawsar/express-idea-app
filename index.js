@@ -8,17 +8,25 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const flash = require('connect-flash');
 require('express-async-errors');
-const moment = require('moment');
-const { format } = require('date-fns');
-const { compareValues, truncateText, compareOwner } = require('./helpers');
+
+const {
+    compareValues,
+    truncateText,
+    compareOwner,
+    moment,
+    formatDate,
+    comparePath,
+    incrementedIndex,
+} = require('./helpers');
 
 // config
 const { connectDB, URL } = require('./config/db');
 // routes
-const ideasRoute = require('./routes/idea');
-const indexRoute = require('./routes/index');
-const authRoute = require('./routes/auth');
-const commentRoute = require('./routes/comment');
+const ideasRoutes = require('./routes/idea');
+const indexRoutes = require('./routes/index');
+const authRoutes = require('./routes/auth');
+const commentRoutes = require('./routes/comment');
+const userRoutes = require('./routes/user');
 
 // middleware
 const errorMiddleware = require('./middleware/errorMiddleware');
@@ -40,12 +48,10 @@ app.engine(
             compareValues,
             truncateText,
             compareOwner,
-            moment(date) {
-                return moment(date).toNow();
-            },
-            formatDate(date, dateFormat) {
-                return format(date, dateFormat);
-            },
+            moment,
+            formatDate,
+            comparePath,
+            incrementedIndex,
         },
     })
 );
@@ -72,9 +78,10 @@ localStrategy(passport);
 googleStrategy(passport);
 
 app.use((req, res, next) => {
-    res.locals.user = req?.user ? req.user : null;
+    res.locals.loggedInUser = req?.user ? req.user : null;
+    res.locals.firstName = req?.user ? req.user.firstName : null;
     // eslint-disable-next-line no-underscore-dangle
-    res.locals.userId = req?.user ? req.user._id : null;
+    res.locals.loggedInUserId = req?.user ? req.user._id : null;
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error = req.flash('error');
     res.locals.error_msg = req.flash('error_msg');
@@ -86,11 +93,11 @@ app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: false }));
 
 // auth
-app.use('/auth', authRoute);
-app.use('/ideas', ideasRoute);
-app.use('/ideas/:id/comments', commentRoute);
-
-app.use('/', indexRoute);
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+app.use('/ideas', ideasRoutes);
+app.use('/ideas/:id/comments', commentRoutes);
+app.use('/', indexRoutes);
 
 // Error handling middleware
 app.use(errorMiddleware);

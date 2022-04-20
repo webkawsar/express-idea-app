@@ -1,6 +1,6 @@
 const { check, validationResult } = require('express-validator');
 const Idea = require('../../models/Idea');
-const generateIdeaDoc = require('../../helpers/ideaDoc');
+const generateIdeaDoc = require('../../helpers/generateIdeaDoc');
 
 const addCommentValidator = [
     check('title')

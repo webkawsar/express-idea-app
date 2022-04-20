@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Idea = require('../models/Idea');
-const generateIdeaDoc = require('../helpers/ideaDoc');
+const generateIdeaDoc = require('../helpers/generateIdeaDoc');
 const { Comment } = require('../models/Comment');
 
 /*

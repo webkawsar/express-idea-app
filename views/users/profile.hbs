@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-4">
+        {{> _dashboard-panel-left}}
+    </div>
+    <div class="col-md-8">
+        <ul class="list-group">
+            <li class="list-group-item">Profile picture: please click edit profile to upload profile picture</li>
+            <li class="list-group-item">Firstname: {{user.firstName}}</li>
+            <li class="list-group-item">Lastname: {{user.lastName}}</li>
+            <li class="list-group-item">Email: {{user.email}}</li>
+            <li class="list-group-item">Password: *********</li>
+        </ul>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="/users/me/edit" class="btn btn-primary">Edit profile</a>
+            
+            <form style="margin: 0;" action="/users/me?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-danger">Delete Account</button>
+            </form>
+        </div>
+    </div>
+</div>
