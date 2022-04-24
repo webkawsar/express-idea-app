@@ -28,6 +28,15 @@
     <option value="private" {{#if idea.status}} {{ compareValues 'private' idea.status }} {{/if}}>Private</option>
   </select>
 
+  <label for="categories" class="form-label">Categories</label>
+   <select class="form-select mb-4" name="categories" id="categories" multiple>
+    {{#each categories}}
+      <option value="{{category}}">{{category}}</option>
+    {{/each}}
+  </select>
+
+  
+
   <div class="mb-3">
     <label for="tags" class="form-label">Tags</label>
     <input type="text" name="tags" class="form-control" id="tags" data-role="tagsinput" 

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const User = require('../models/User');
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 
@@ -7,7 +8,8 @@ exports.new = (req, res) => {
 
 // create user
 exports.create = asyncMiddleware(async (req, res) => {
-    const user = new User({ ...req.body });
+    const pickedValue = _.pick(req.body, ['firstName', 'lastName', 'email', 'password']);
+    const user = new User(pickedValue);
     await user.save();
 
     req.flash('success_msg', 'Registration successful');

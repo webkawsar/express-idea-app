@@ -30,6 +30,7 @@
     "method-override": "^3.0.0",
     "moment": "^2.29.2",
     "mongoose": "^6.2.9",
+    "multer": "^1.4.4",
     "passport": "^0.5.2",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0"

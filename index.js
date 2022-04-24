@@ -27,6 +27,7 @@ const indexRoutes = require('./routes/index');
 const authRoutes = require('./routes/auth');
 const commentRoutes = require('./routes/comment');
 const userRoutes = require('./routes/user');
+const categoryRoutes = require('./routes/category');
 
 // middleware
 const errorMiddleware = require('./middleware/errorMiddleware');
@@ -72,6 +73,7 @@ app.use(
     })
 );
 app.use(flash());
+app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
 localStrategy(passport);
@@ -79,6 +81,7 @@ googleStrategy(passport);
 
 app.use((req, res, next) => {
     res.locals.loggedInUser = req?.user ? req.user : null;
+    res.locals.isAdmin = req?.user?.role === 1;
     res.locals.firstName = req?.user ? req.user.firstName : null;
     // eslint-disable-next-line no-underscore-dangle
     res.locals.loggedInUserId = req?.user ? req.user._id : null;
@@ -96,6 +99,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/ideas', ideasRoutes);
+app.use('/categories', categoryRoutes);
 app.use('/ideas/:id/comments', commentRoutes);
 app.use('/', indexRoutes);
 

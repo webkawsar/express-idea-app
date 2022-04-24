@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-4">
+        {{> _dashboard-panel-left}}
+    </div>
+    <div class="col-md-8">
+        <form action="/categories" method="POST" id="categoryForm">
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <input type="text" class="form-control" name="category" id="category">
+            </div>
+            <button type="submit" class="btn btn-primary">Add Category</button>
+        </form>
+
+        <div class="categories mt-5">
+            <h2 class="text-muted">List of categories</h2>
+            <div id="catList">
+
+            </div>
+        </div>
+    </div>
+
+</div>

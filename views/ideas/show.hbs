@@ -8,6 +8,16 @@
         <h5 class="card-title">{{idea.title}}</h5>
         <div class="card-text mb-0">{{{idea.description}}} </div>
 
+        <div class="like-comment mb-2" data-idea="{{idea._id}}">
+          <span id="like" class="d-inline-block me-2" style="cursor: pointer;">
+            <i class="fa-solid fa-thumbs-up"></i><span class="like-count"></span>
+          </span>
+
+          <span class="d-inline-block" style="cursor: pointer;">
+            <i class="fa-solid fa-comment"></i><span class="comment-count"></span>
+          </span>
+        </div>
+
         <div class="tag mb-3">
           <label for="tags">Tags: </label>
           {{#each idea.tags}}

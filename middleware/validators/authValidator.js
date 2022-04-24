@@ -21,8 +21,8 @@ const registerValidator = [
         .withMessage('Email is required')
         .isEmail()
         .withMessage('Please add valid email')
-        .trim()
-        .normalizeEmail(),
+        .trim(),
+    // .normalizeEmail()
 
     check('email').custom(async (email) => {
         const user = await User.findOne({ email });

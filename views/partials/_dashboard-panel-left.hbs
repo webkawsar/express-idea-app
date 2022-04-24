@@ -11,6 +11,15 @@
     class="list-group-item list-group-item-action
       {{comparePath '/users/me' path}}"
   >Profile</a>
+
+  {{#if isAdmin}}
+    <a
+      href="/categories/new"
+      class="list-group-item list-group-item-action
+        {{comparePath '/categories' path}}"
+    >Category</a>
+  {{/if}}
+
   <a
     href="/auth/logout"
     class="list-group-item list-group-item-action

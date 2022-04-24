@@ -59,7 +59,10 @@ const googleStrategy = (passport) => {
 
             async (accessToken, refreshToken, profile, next) => {
                 try {
-                    const foundUser = await User.findOne({ googleID: profile.id });
+                    const foundUser = await User.findOne({
+                        email: profile.emails[0].value,
+                    });
+
                     if (foundUser) {
                         next(null, foundUser);
                     } else {

@@ -12,6 +12,7 @@ const checkIdeaOwnership = require('../middleware/checkIdeaOwnership');
 const ideaController = require('../controllers/ideaController');
 // middleware
 const protect = require('../middleware/protect');
+const ajaxProtect = require('../middleware/ajaxProtect');
 
 // Get All Ideas
 router.get('/', ideaController.getAll);
@@ -21,12 +22,18 @@ router.get('/new', protect, ideaController.new);
 
 // Get Single Idea
 router.get('/:id', ideaController.getSingle);
+// get idea like comment count
+router.get('/:id/likes', ideaController.likeCount);
+router.get('/:id/comments', ideaController.commentCount);
 
 // Get edit idea form
 router.get('/:id/edit', [protect, checkIdeaOwnership], ideaController.edit);
 
 // create Idea
 router.post('/', [protect, ideaValidator, addIdeaValidationResult], ideaController.create);
+
+// like idea
+router.post('/:id/likes', ajaxProtect, ideaController.toggleLike);
 
 // update idea
 router.put(

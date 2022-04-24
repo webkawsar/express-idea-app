@@ -22,6 +22,13 @@ const ideaValidator = [
         .isIn(['public', 'private'])
         .withMessage('Please select status public or private'),
 
+    check('categories')
+        .trim()
+        .notEmpty()
+        .withMessage('Please select category')
+        .isLength({ min: 1 })
+        .withMessage('Category select must'),
+
     check('tags')
         .trim()
         .notEmpty()
@@ -32,6 +39,7 @@ const ideaValidator = [
 
 // eslint-disable-next-line consistent-return
 const addIdeaValidationResult = (req, res, next) => {
+    console.log(req.body, 'req.body');
     const errors = validationResult(req);
     const allowComments = !!req.body.allowComments;
     req.body.allowComments = allowComments;

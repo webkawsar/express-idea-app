@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Idea = require('../models/Idea');
 const generateIdeaDoc = require('../helpers/generateIdeaDoc');
-const { Comment } = require('../models/Comment');
+const Comment = require('../models/Comment');
 
 /*
  * @params: id

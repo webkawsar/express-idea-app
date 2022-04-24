@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const { commentSchema } = require('./Comment');
 
 const ideaSchema = new mongoose.Schema(
     {
@@ -46,6 +45,11 @@ const ideaSchema = new mongoose.Schema(
             lastName: String,
             email: String,
         },
+        categories: [
+            {
+                categoryName: String,
+            },
+        ],
     },
     {
         versionKey: false,

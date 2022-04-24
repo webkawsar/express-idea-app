@@ -1,10 +1,10 @@
 const express = require('express');
 
 const router = express.Router();
-const checkGuest = require('../middleware/checkGuest');
+const isGuest = require('../middleware/isGuest');
 
 // Root route
-router.get('/', checkGuest, (req, res) => {
+router.get('/', isGuest, (req, res) => {
     res.render('pages/index', {
         title: 'Home Page',
         text: 'Share Idea for better Future',

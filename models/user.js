@@ -25,12 +25,6 @@ const userSchema = new mongoose.Schema(
             trim: true,
             unique: true,
             lowercase: true,
-            // validate: {
-            //     validator(v) {
-            //         return v.match(/@/i);
-            //     },
-            //     message: 'Please add valid email',
-            // },
         },
         password: {
             type: String,
@@ -47,6 +41,10 @@ const userSchema = new mongoose.Schema(
                 },
                 message: "Password can't set common word or text",
             },
+        },
+        role: {
+            type: Number,
+            default: 0,
         },
     },
     {
@@ -75,6 +73,7 @@ userSchema.virtual('ideas', {
     foreignField: 'user._id',
 });
 
+// eslint-disable-next-line func-names
 userSchema.pre('remove', async function (next) {
     const { id } = this;
     await Idea.deleteMany({ 'user.id': id });

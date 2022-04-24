@@ -13,14 +13,14 @@ const {
     loginValidationResult,
 } = require('../middleware/validators/authValidator');
 const protect = require('../middleware/protect');
-const checkGuest = require('../middleware/checkGuest');
+const isGuest = require('../middleware/isGuest');
 
 // routes
-router.get('/register', checkGuest, authController.new);
+router.get('/register', isGuest, authController.new);
 router.post('/register', registerValidator, registerValidationResult, authController.create);
 
 // Passport local
-router.get('/login', checkGuest, authController.loginForm);
+router.get('/login', isGuest, authController.loginForm);
 router.post(
     '/login',
     loginValidator,

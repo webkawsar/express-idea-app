@@ -1,4 +1,4 @@
-const { Comment } = require('../models/Comment');
+const Comment = require('../models/Comment');
 
 // eslint-disable-next-line consistent-return
 const checkCommentOwnership = async (req, res, next) => {

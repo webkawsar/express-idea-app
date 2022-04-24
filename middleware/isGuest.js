@@ -1,4 +1,4 @@
-const checkGuest = (req, res, next) => {
+const isGuest = (req, res, next) => {
     if (req.isAuthenticated()) {
         res.redirect('/users/me/ideas');
     } else {
@@ -6,4 +6,4 @@ const checkGuest = (req, res, next) => {
     }
 };
 
-module.exports = checkGuest;
+module.exports = isGuest;

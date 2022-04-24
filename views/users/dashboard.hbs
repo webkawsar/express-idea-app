@@ -1,4 +1,17 @@
+
+
 <div class="row">
+
+    {{#if isAdmin}}
+        <div class="col-md-12">
+            <h2 class="display-4 text-center mb-4">Welcome Admin</h2>
+        </div>
+    {{else}}
+        <div class="col-md-12">
+            <h2 class="display-4 text-center mb-4">Welcome {{firstName}}</h2>
+        </div>
+    {{/if}}
+
     <div class="col-md-4">
         {{> _dashboard-panel-left}}
     </div>
