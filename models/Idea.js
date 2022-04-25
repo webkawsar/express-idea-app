@@ -45,11 +45,14 @@ const ideaSchema = new mongoose.Schema(
             lastName: String,
             email: String,
         },
-        categories: [
-            {
-                categoryName: String,
+        category: {
+            _id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Category',
             },
-        ],
+            categoryName: String,
+        },
+        image: String,
     },
     {
         versionKey: false,

@@ -1,6 +1,8 @@
 // model
 const Category = require('../models/Category');
 
+const generateIdeaDoc = require('../helpers/generateIdeaDoc');
+
 exports.new = (req, res) => {
     res.render('admin/category', {
         title: 'Add a Category',
@@ -26,4 +28,26 @@ exports.delete = async (req, res) => {
     if (!category) return res.status(404).send({ success: false, message: 'Category Not Found' });
 
     res.status(200).send({ success: true, message: 'Category deleted successfully' });
+};
+
+// eslint-disable-next-line consistent-return
+exports.getIdeas = async (req, res) => {
+    const { id } = req.params;
+    const category = await Category.findById(id).populate('ideas');
+
+    if (!category) return res.status(404).send({ success: false, message: 'Category Not Found' });
+
+    const generateIdeas = [];
+    category.ideas.forEach((idea) => {
+        if (idea.status === 'public') {
+            generateIdeas.push(generateIdeaDoc(idea));
+        }
+    });
+
+    res.render('ideas/index', {
+        title: `All Ideas by ${category.category}`,
+        ideas: generateIdeas,
+        categoryRef: true,
+        categoryName: category.category,
+    });
 };

@@ -3,20 +3,34 @@
         {{> _dashboard-panel-left}}
     </div>
     <div class="col-md-8">
-        <ul class="list-group">
-            <li class="list-group-item">Profile picture: please click edit profile to upload profile picture</li>
-            <li class="list-group-item">Firstname: {{user.firstName}}</li>
-            <li class="list-group-item">Lastname: {{user.lastName}}</li>
-            <li class="list-group-item">Email: {{user.email}}</li>
-            <li class="list-group-item">Password: *********</li>
-        </ul>
+        <div class="card" style="width: 25rem;">
+            {{#if user.imageURL}}
+                <img src="{{user.imageURL}}" style="height: 300px" class="card-img-top" alt="{{user.firstName}}">
+            {{else}}
+                <img style="height: 300px;" src="/uploads/users/{{user.image}}" class="card-img-top" alt="{{user.firstName}}">
+            {{/if}}
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="/users/me/edit" class="btn btn-primary">Edit profile</a>
-            
-            <form style="margin: 0;" action="/users/me?_method=DELETE" method="POST">
-                <button type="submit" class="btn btn-danger">Delete Account</button>
-            </form>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Profile picture: please click edit profile to upload profile picture</li>
+                <li class="list-group-item">Firstname: {{user.firstName}}</li>
+                <li class="list-group-item">Lastname: {{user.lastName}}</li>
+                <li class="list-group-item">Email: {{user.email}}</li>
+                <li class="list-group-item">Password: *********</li>
+            </ul>
+
+            <div class="card-body">
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="/users/me/edit" class="btn btn-primary">Edit profile</a>
+                    
+                    <form style="margin: 0;" action="/users/me?_method=DELETE" method="POST">
+                        <button type="submit" class="btn btn-danger">Delete Account</button>
+                    </form>
+                </div>
+            </div>
         </div>
+         
+
+
+        
     </div>
 </div>

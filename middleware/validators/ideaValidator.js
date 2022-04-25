@@ -22,12 +22,35 @@ const ideaValidator = [
         .isIn(['public', 'private'])
         .withMessage('Please select status public or private'),
 
-    check('categories')
-        .trim()
-        .notEmpty()
-        .withMessage('Please select category')
-        .isLength({ min: 1 })
-        .withMessage('Category select must'),
+    check('category', 'Please select category').trim().notEmpty(),
+
+    // check('idea_img', 'Please select Idea image').notEmpty(),
+    check('idea_img').custom((value, { req }) => {
+        const { file } = req;
+        if (file) {
+            // do
+            const jpeg = file.mimetype === 'image/jpeg';
+            const jpg = file.mimetype === 'image/jpg';
+            const png = file.mimetype === 'image/png';
+
+            if (!jpeg || jpg || png) {
+                throw new Error('Only jpeg, jpg, png image is allowed');
+            }
+            return true;
+        }
+        return true;
+    }),
+
+    check('idea_img').custom((value, { req }) => {
+        const { file } = req;
+        if (file) {
+            if (file.size > 2000000) {
+                throw new Error('File less than 2mb is allowed');
+            }
+            return true;
+        }
+        return true;
+    }),
 
     check('tags')
         .trim()
@@ -39,7 +62,6 @@ const ideaValidator = [
 
 // eslint-disable-next-line consistent-return
 const addIdeaValidationResult = (req, res, next) => {
-    console.log(req.body, 'req.body');
     const errors = validationResult(req);
     const allowComments = !!req.body.allowComments;
     req.body.allowComments = allowComments;
@@ -53,6 +75,7 @@ const addIdeaValidationResult = (req, res, next) => {
             status: req.body.status,
             allowComments,
             tags: req.body.tags,
+            category: req.body.category,
         };
         return res.render('ideas/new', {
             title: 'Add New Idea',

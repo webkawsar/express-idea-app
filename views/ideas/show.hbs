@@ -1,8 +1,13 @@
 {{! Idea card start }}
 <div class="card mb-3">
+  {{#if idea.image}}
+    <img src="/uploads/ideas/{{idea.image}}" class="img-fluid rounded-start" alt="Idea image">
+  {{else}}
+   <img src="/uploads/ideas/default.jpg" class="img-fluid rounded-start" alt="Default Idea image">
+  {{/if}}
   <div class="row g-0">
     <div class="col-md-8">
-      {{! <img src="..." class="img-fluid rounded-start" alt="..."> }}
+      
       <div class="card-body">
 
         <h5 class="card-title">{{idea.title}}</h5>
@@ -16,6 +21,17 @@
           <span class="d-inline-block" style="cursor: pointer;">
             <i class="fa-solid fa-comment"></i><span class="comment-count"></span>
           </span>
+        </div>
+
+        <div class="category mb-3">
+          <label for="category">Category: </label>
+          {{#if idea.category}}
+            <a
+              href="/categories/{{idea.category._id}}/ideas"
+              style="text-decoration: none;"
+              class="badge bg-primary"
+            >{{idea.category.categoryName}}</a>
+          {{/if}}
         </div>
 
         <div class="tag mb-3">

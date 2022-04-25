@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
+const fs = require('fs');
+const util = require('util');
+const path = require('path');
 const Idea = require('./Idea');
 
+const deleteFilePromise = util.promisify(fs.unlink);
 const userSchema = new mongoose.Schema(
     {
         googleID: String,
@@ -46,6 +50,8 @@ const userSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        image: String,
+        imageURL: String,
     },
     {
         versionKey: false,
@@ -75,8 +81,19 @@ userSchema.virtual('ideas', {
 
 // eslint-disable-next-line func-names
 userSchema.pre('remove', async function (next) {
-    const { id } = this;
+    const { id, image } = this;
+    const ideas = await Idea.find({ 'user.id': id });
+    // eslint-disable-next-line array-callback-return
+    ideas.map((idea) => {
+        if (idea.image) {
+            deleteFilePromise(`${path.join(__dirname, '../public/uploads/ideas')}/${idea.image}`);
+        }
+    });
+
     await Idea.deleteMany({ 'user.id': id });
+    if (image) {
+        deleteFilePromise(`${path.join(__dirname, '../public/uploads/users')}/${image}`);
+    }
     next();
 });
 

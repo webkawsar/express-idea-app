@@ -13,6 +13,7 @@ const ideaController = require('../controllers/ideaController');
 // middleware
 const protect = require('../middleware/protect');
 const ajaxProtect = require('../middleware/ajaxProtect');
+const upload = require('../middleware/upload');
 
 // Get All Ideas
 router.get('/', ideaController.getAll);
@@ -30,7 +31,7 @@ router.get('/:id/comments', ideaController.commentCount);
 router.get('/:id/edit', [protect, checkIdeaOwnership], ideaController.edit);
 
 // create Idea
-router.post('/', [protect, ideaValidator, addIdeaValidationResult], ideaController.create);
+router.post('/', [protect, upload, ideaValidator, addIdeaValidationResult], ideaController.create);
 
 // like idea
 router.post('/:id/likes', ajaxProtect, ideaController.toggleLike);
@@ -38,7 +39,7 @@ router.post('/:id/likes', ajaxProtect, ideaController.toggleLike);
 // update idea
 router.put(
     '/:id',
-    [protect, checkIdeaOwnership, ideaValidator, editValidationResult],
+    [protect, upload, checkIdeaOwnership, ideaValidator, editValidationResult],
     ideaController.update
 );
 

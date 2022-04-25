@@ -20,6 +20,7 @@ router.post(
     categoryController.create
 );
 router.get('/', [protect, isAdmin], categoryController.getAll);
+router.get('/:id/ideas', categoryController.getIdeas);
 router.delete('/:catName', [protect, isAdmin], categoryController.delete);
 
 module.exports = router;

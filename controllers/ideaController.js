@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const sharp = require('sharp');
+const path = require('path');
+const util = require('util');
+const fs = require('fs');
 const Idea = require('../models/Idea');
 const Like = require('../models/Like');
 const Comment = require('../models/Comment');
@@ -7,6 +11,8 @@ const Category = require('../models/Category');
 const generateIdeaDoc = require('../helpers/generateIdeaDoc');
 const generateCommentDoc = require('../helpers/generateCommentDoc');
 const generateCategoryDoc = require('../helpers/generateCategoryDoc');
+
+const deleteFilePromise = util.promisify(fs.unlink);
 
 // Get All Ideas
 exports.getAll = async (req, res) => {
@@ -34,7 +40,7 @@ exports.getSingle = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).render('notFound', { title: 'Not found' });
     }
-    let idea = await Idea.findById(id).populate('comments');
+    let idea = await Idea.findById(id).populate(['comments', 'category']);
     if (!idea) return res.status(404).render('notFound', { title: 'Not found' });
 
     idea = generateIdeaDoc(idea);
@@ -52,10 +58,17 @@ exports.edit = async (req, res) => {
         return res.status(404).render('notFound', { title: 'Not found' });
     }
 
+    const categories = await Category.find();
+    const categoriesDoc = categories.map((category) => generateCategoryDoc(category));
+
     let idea = await Idea.findById(id);
     if (idea) {
         idea = generateIdeaDoc(idea);
-        res.render('ideas/edit', { title: idea.title, idea });
+        res.render('ideas/edit', {
+            title: idea.title,
+            idea,
+            categories: categoriesDoc,
+        });
     } else {
         res.status(404).render('notFound', { title: 'Not found' });
     }
@@ -63,7 +76,7 @@ exports.edit = async (req, res) => {
 
 // create Idea
 exports.create = async (req, res) => {
-    return;
+    const category = await Category.findOne({ category: req.body.category });
     const idea = new Idea({
         ...req.body,
         user: {
@@ -72,8 +85,27 @@ exports.create = async (req, res) => {
             lastName: req.user.lastName,
             email: req.user.email,
         },
+        category: {
+            _id: category,
+            categoryName: category.category,
+        },
     });
+
+    if (req.file) {
+        const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${
+            req.file.originalname
+        }`;
+
+        await sharp(req.file.buffer)
+            .resize({ width: 1200, height: 300 })
+            .png()
+            .toFile(`${path.join(__dirname, '../public/uploads/ideas')}/${fileName}`);
+
+        idea.image = fileName;
+    }
+
     await idea.save();
+
     req.flash('success_msg', 'Idea created successfully');
     // redirect user
     res.redirect('/ideas');
@@ -82,6 +114,7 @@ exports.create = async (req, res) => {
 // update idea
 exports.update = async (req, res) => {
     const { id } = req.params;
+    const idea = await Idea.findById(id);
     // update value
     const pickedValue = _.pick(req.body, [
         'title',
@@ -91,8 +124,29 @@ exports.update = async (req, res) => {
         'tags',
     ]);
 
-    const idea = await Idea.findByIdAndUpdate(id, pickedValue);
-    if (idea) {
+    if (req.file) {
+        const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${
+            req.file.originalname
+        }`;
+
+        await sharp(req.file.buffer)
+            .resize({ width: 1200, height: 300 })
+            .png()
+            .toFile(`${path.join(__dirname, '../public/uploads/ideas')}/${fileName}`);
+
+        pickedValue.image = fileName;
+
+        // delete existing image
+        if (idea.image) {
+            await deleteFilePromise(
+                `${path.join(__dirname, '../public/uploads/ideas')}/${idea.image}`
+            );
+            console.log('Existing idea image deleted successfully');
+        }
+    }
+
+    const updateIdea = await Idea.findByIdAndUpdate(id, pickedValue);
+    if (updateIdea) {
         req.flash('success_msg', 'Idea updated successfully');
         res.redirect(`/ideas/${id}`);
     } else {
@@ -109,6 +163,11 @@ exports.delete = async (req, res) => {
     }
 
     const idea = await Idea.findByIdAndDelete(id);
+    // delete existing image
+    if (idea.image) {
+        await deleteFilePromise(`${path.join(__dirname, '../public/uploads/ideas')}/${idea.image}`);
+        console.log('Idea image deleted successfully');
+    }
     if (idea) {
         req.flash('success_msg', 'Idea delete successfully');
         res.redirect('/ideas');

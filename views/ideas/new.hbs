@@ -1,4 +1,4 @@
-<form action="/ideas" method="POST">
+<form action="/ideas" method="POST" enctype="multipart/form-data">
   <div class="mb-3">
     <label for="title" class="form-label">Title</label>
     <input type="text" name="title" class="form-control" id="title"
@@ -28,14 +28,17 @@
     <option value="private" {{#if idea.status}} {{ compareValues 'private' idea.status }} {{/if}}>Private</option>
   </select>
 
-  <label for="categories" class="form-label">Categories</label>
-   <select class="form-select mb-4" name="categories" id="categories" multiple>
+  <label for="category" class="form-label">Category</label>
+   <select class="form-select mb-4" name="category" id="category">
     {{#each categories}}
       <option value="{{category}}">{{category}}</option>
     {{/each}}
   </select>
 
-  
+  <div class="mb-3">
+    <label for="idea_img" class="form-label">Idea featured image</label>
+    <input name="idea_img" class="form-control" type="file" id="idea_img">
+  </div>
 
   <div class="mb-3">
     <label for="tags" class="form-label">Tags</label>

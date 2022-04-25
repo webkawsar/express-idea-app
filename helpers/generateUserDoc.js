@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 const generateUserDoc = ({
- _id, firstName, lastName, email, createdAt, updatedAt,
+ _id, firstName, lastName, email, createdAt, updatedAt, image, imageURL,
 }) => ({
     _id,
     firstName,
@@ -8,6 +8,8 @@ const generateUserDoc = ({
     email,
     createdAt,
     updatedAt,
+    image,
+    imageURL,
 });
 
 module.exports = generateUserDoc;

@@ -12,6 +12,8 @@ const generateIdeaDoc = ({
     createdAt,
     updatedAt,
     user,
+    category,
+    image,
 }) => ({
     title,
     description,
@@ -23,6 +25,8 @@ const generateIdeaDoc = ({
     createdAt,
     updatedAt,
     user,
+    category,
+    image,
 });
 
 module.exports = generateIdeaDoc;

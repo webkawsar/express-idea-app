@@ -15,6 +15,33 @@ const profileValidator = [
         .trim()
         .isLength({ max: 10, min: 3 })
         .withMessage('Last name must be between 3 to 10 char'),
+
+    check('profile_pic').custom((value, { req }) => {
+        const { file } = req;
+        if (file) {
+            // do
+            const jpeg = file.mimetype === 'image/jpeg';
+            const jpg = file.mimetype === 'image/jpg';
+            const png = file.mimetype === 'image/png';
+
+            if (!jpeg || jpg || png) {
+                throw new Error('Only jpeg, jpg, png image is allowed');
+            }
+            return true;
+        }
+        return true;
+    }),
+
+    check('profile_pic').custom((value, { req }) => {
+        const { file } = req;
+        if (file) {
+            if (file.size > 1000000) {
+                throw new Error('File less than 1mb is allowed');
+            }
+            return true;
+        }
+        return true;
+    }),
 ];
 
 // eslint-disable-next-line consistent-return

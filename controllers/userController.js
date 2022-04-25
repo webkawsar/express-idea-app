@@ -1,7 +1,13 @@
 const _ = require('lodash');
+const sharp = require('sharp');
+const path = require('path');
+const fs = require('fs');
+const util = require('util');
 const User = require('../models/User');
 const generateUserDoc = require('../helpers/generateUserDoc');
 const generateIdeaDoc = require('../helpers/generateIdeaDoc');
+
+const deleteFilePromise = util.promisify(fs.unlink);
 
 /*
  * @params:
@@ -50,6 +56,29 @@ exports.editForm = async (req, res) => {
 // eslint-disable-next-line consistent-return
 exports.update = async (req, res) => {
     const pickedValue = _.pick(req.body, ['firstName', 'lastName']);
+    if (req.file) {
+        const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${
+            req.file.originalname
+        }`;
+        await sharp(req.file.buffer)
+            .resize({ width: 300, height: 300 })
+            .png()
+            .toFile(`${path.join(__dirname, '../public/uploads/users/')}/${fileName}`);
+
+        pickedValue.image = fileName;
+        if (req.user.imageURL) {
+            req.user.imageURL = undefined;
+            await req.user.save({ validateBeforeSave: false });
+        }
+
+        // delete existing image
+        if (req.user.image) {
+            await deleteFilePromise(
+                `${path.join(__dirname, '../public/uploads/users')}/${req.user.image}`
+            );
+            console.log('Existing profile image deleted successfully');
+        }
+    }
     const user = await User.findByIdAndUpdate(req.user.id, pickedValue);
     if (!user) return res.status(404).render('notFound', { title: 'Not Found' });
 

@@ -4,7 +4,7 @@
     </div>
     <div class="col-md-8">
         <h2 class="text-muted">Edit profile</h2>
-        <form action="/users/me?_method=PUT" method="POST">
+        <form action="/users/me?_method=PUT" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="firstName" class="form-label">Firstname</label>
                 <input type="text" class="form-control" name="firstName" id="firstName" value="{{userInput.firstName}}">
