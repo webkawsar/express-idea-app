@@ -35,7 +35,6 @@ const userSchema = new mongoose.Schema(
             required: true,
             trim: true,
             minlength: [6, "Password can't accept less than 6 char"],
-            maxlength: 20,
             validate: {
                 // eslint-disable-next-line consistent-return
                 validator(v) {
@@ -52,6 +51,11 @@ const userSchema = new mongoose.Schema(
         },
         image: String,
         imageURL: String,
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        isToken: String,
     },
     {
         versionKey: false,

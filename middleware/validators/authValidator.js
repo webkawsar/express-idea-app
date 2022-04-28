@@ -25,7 +25,7 @@ const registerValidator = [
     // .normalizeEmail()
 
     check('email').custom(async (email) => {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email, isVerified: true });
         if (user) {
             throw new Error('Email is already registered!');
         } else {
@@ -37,8 +37,8 @@ const registerValidator = [
         .notEmpty()
         .withMessage('Password is required')
         .trim()
-        .isLength({ min: 6, max: 20 })
-        .withMessage('Password must be between 6 to 20 char')
+        .isLength({ min: 6 })
+        .withMessage('Password must be less than 6 chars')
         .not()
         .isIn(['abc123', 'password', 'iloveyou'])
         .withMessage("Password can't set common word or text"),
@@ -96,9 +96,80 @@ const loginValidationResult = (req, res, next) => {
     next();
 };
 
+// forget password validators
+const forgetValidator = [
+    check('email')
+        .trim()
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Please add valid email'),
+
+    check('email').custom(async (value, { req }) => {
+        const { email } = req.body;
+        const user = await User.findOne({ email, isVerified: true });
+        if (user) {
+            req.forgetUser = user;
+            return true;
+        }
+        throw new Error("User doesn't exists");
+    }),
+];
+
+// eslint-disable-next-line consistent-return
+const forgetValidationResult = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.render('auth/forget-password', {
+            title: 'Forget Password',
+            errMsg: errors.array()[0].msg,
+        });
+    }
+    next();
+};
+
+// reset password validators
+const resetValidator = [
+    check('password')
+        .trim()
+        .notEmpty()
+        .withMessage('Password is required')
+        .isLength({ min: 6 })
+        .withMessage('Password must be less than 6 char')
+        .not()
+        .isIn(['abc123', 'password', 'iloveyou'])
+        .withMessage("Password can't set common word or text"),
+
+    check('confirmPassword')
+        .notEmpty()
+        .withMessage('Confirm password is required')
+        .trim()
+        .custom((confirmPassword, { req }) => {
+            if (confirmPassword === req.body.password) {
+                return true;
+            }
+            throw new Error("Password doesn't match");
+        }),
+];
+
+// eslint-disable-next-line consistent-return
+const resetValidationResult = async (req, res, next) => {
+    const errors = validationResult(req);
+    const { token } = req.body;
+    if (!errors.isEmpty()) {
+        req.flash('error_msg', errors.array()[0].msg);
+        return res.redirect(`/auth/reset-password/${token}`);
+    }
+    next();
+};
+
 module.exports = {
     registerValidator,
     registerValidationResult,
     loginValidator,
     loginValidationResult,
+    forgetValidator,
+    forgetValidationResult,
+    resetValidator,
+    resetValidationResult,
 };

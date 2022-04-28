@@ -17,7 +17,7 @@ const localStrategy = (passport) => {
 
                 try {
                     // check user by email
-                    const user = await User.findOne({ email });
+                    const user = await User.findOne({ email, isVerified: true });
 
                     if (!user) {
                         return next(null, false, { message: 'Invalid email or password' });
@@ -61,6 +61,7 @@ const googleStrategy = (passport) => {
                 try {
                     const foundUser = await User.findOne({
                         email: profile.emails[0].value,
+                        isVerified: true,
                     });
 
                     if (foundUser) {
