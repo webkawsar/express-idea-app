@@ -1,42 +1,256 @@
-{{#if userRef}}
+<div class="row">
+  <div class="col-md-9">
+    {{#if userRef}}
 
-  <h2 class="text-muted mb-3">All Ideas by {{firstName}}</h2>
-  {{#each ideas}}
-    <div class="card mb-1">
-      {{! <img src="..." class="card-img-top" alt="..." /> }}
-      <div class="card-body">
-        <h5 class="card-title">{{title}}</h5>
-        <div class="card-text">{{{truncateText description 300}}} </div>
-        <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
-      </div>
+      <h2 class="text-muted mb-3">All Ideas by {{firstName}}</h2>
+      {{#each ideas}}
+        <div class="card mb-1">
+          {{! <img src="..." class="card-img-top" alt="..." /> }}
+          <div class="card-body">
+            <h5 class="card-title">{{title}}</h5>
+            <div class="card-text">{{{truncateText description 300}}} </div>
+            <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
+          </div>
+        </div>
+      {{else}}
+        <div class="card">
+          <div class="card-body">
+            <div class="card-text text-center text-muted">No Ideas Found
+            </div>
+          </div>
+        </div>
+      {{/each}}
+
+      <nav class="mt-2">
+        <ul class="pagination justify-content-center">
+
+          {{#if hasPreviousPage}}
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="/users/{{userId}}/ideas?page={{previousPage}}"
+              >
+                <span aria-hidden="true">&laquo;</span>
+                Previous
+              </a>
+            </li>
+          {{/if}}
+
+          {{#if (comparePagination currentPage 1)}}
+            {{#if (comparePagination previousPage 1)}}
+              <li class="page-item" aria-current="page">
+                <a class="page-link" href="/users/{{userId}}/ideas?page=1">1</a>
+              </li>
+            {{/if}}
+          {{/if}}
+
+          <li class="page-item active" aria-current="page">
+            <a
+              class="page-link"
+              href="/users/{{userId}}/ideas?page={{currentPage}}"
+            >{{currentPage}}</a>
+          </li>
+
+          {{#if lastPage}}
+            {{#if (comparePagination currentPage lastPage)}}
+              {{#if (comparePagination nextPage lastPage)}}
+                <li class="page-item" aria-current="page">
+                  <a
+                    class="page-link"
+                    href="/users/{{userId}}/ideas?page={{lastPage}}"
+                  >{{lastPage}}</a>
+                </li>
+              {{/if}}
+            {{/if}}
+          {{/if}}
+
+          {{#if hasNextPage}}
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="/users/{{userId}}/ideas?page={{nextPage}}"
+              >
+                Next
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          {{/if}}
+        </ul>
+      </nav>
+
+    {{else if categoryRef}}
+
+      <h2 class="text-muted mb-3">All Ideas by {{categoryName}} </h2>
+      {{#each ideas}}
+        <div class="card mb-1">
+          {{! <img src="..." class="card-img-top" alt="..." /> }}
+          <div class="card-body">
+            <h5 class="card-title">{{title}}</h5>
+            <div class="card-text">{{{truncateText description 300}}} </div>
+            <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
+          </div>
+        </div>
+      {{else}}
+        <div class="card">
+          <div class="card-body">
+            <div class="card-text text-center text-muted">No Ideas Found
+            </div>
+          </div>
+        </div>
+      {{/each}}
+
+      <nav class="mt-2">
+        <ul class="pagination justify-content-center">
+
+          {{#if hasPreviousPage}}
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="/categories/{{categoryId}}/ideas?page={{previousPage}}"
+              >
+                <span aria-hidden="true">&laquo;</span>
+                Previous
+              </a>
+            </li>
+          {{/if}}
+
+          {{#if (comparePagination currentPage 1)}}
+            {{#if (comparePagination previousPage 1)}}
+              <li class="page-item" aria-current="page">
+                <a
+                  class="page-link"
+                  href="/categories/{{categoryId}}/ideas?page=1"
+                >1</a>
+              </li>
+            {{/if}}
+          {{/if}}
+
+          <li class="page-item active" aria-current="page">
+            <a
+              class="page-link"
+              href="/categories/{{categoryId}}/ideas?page={{currentPage}}"
+            >{{currentPage}}</a>
+          </li>
+
+          {{#if lastPage}}
+            {{#if (comparePagination currentPage lastPage)}}
+              {{#if (comparePagination nextPage lastPage)}}
+                <li class="page-item" aria-current="page">
+                  <a
+                    class="page-link"
+                    href="/categories/{{categoryId}}/ideas?page={{lastPage}}"
+                  >{{lastPage}}</a>
+                </li>
+              {{/if}}
+            {{/if}}
+          {{/if}}
+
+          {{#if hasNextPage}}
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="/categories/{{categoryId}}/ideas?page={{nextPage}}"
+              >
+                Next
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          {{/if}}
+        </ul>
+      </nav>
+
+    {{else}}
+
+      {{#each ideas}}
+        <div class="card mb-1">
+          {{! <img src="..." class="card-img-top" alt="..." /> }}
+          <div class="card-body">
+            <h5 class="card-title">{{title}}</h5>
+            <div class="card-text">{{{truncateText description 300}}} </div>
+            <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
+          </div>
+        </div>
+      {{else}}
+        <div class="card">
+          <div class="card-body">
+            <div class="card-text text-center text-muted">No Ideas Found
+            </div>
+          </div>
+        </div>
+      {{/each}}
+
+      <nav class="mt-2">
+        <ul class="pagination justify-content-center">
+
+          {{#if hasPreviousPage}}
+            <li class="page-item">
+              <a class="page-link" href="/ideas?page={{previousPage}}">
+                <span aria-hidden="true">&laquo;</span>
+                Previous
+              </a>
+            </li>
+          {{/if}}
+
+          {{#if (comparePagination currentPage 1)}}
+            {{#if (comparePagination previousPage 1)}}
+              <li class="page-item" aria-current="page">
+                <a class="page-link" href="/ideas?page=1">1</a>
+              </li>
+            {{/if}}
+          {{/if}}
+
+          <li class="page-item active" aria-current="page">
+            <a
+              class="page-link"
+              href="/ideas?page={{currentPage}}"
+            >{{currentPage}}</a>
+          </li>
+
+          {{#if lastPage}}
+            {{#if (comparePagination currentPage lastPage)}}
+              {{#if (comparePagination nextPage lastPage)}}
+                <li class="page-item" aria-current="page">
+                  <a
+                    class="page-link"
+                    href="/ideas?page={{lastPage}}"
+                  >{{lastPage}}</a>
+                </li>
+              {{/if}}
+            {{/if}}
+          {{/if}}
+
+          {{#if hasNextPage}}
+            <li class="page-item">
+              <a class="page-link" href="/ideas?page={{nextPage}}">
+                Next
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          {{/if}}
+        </ul>
+      </nav>
+
+    {{/if}}
+  </div>
+
+  <div class="col-md-3">
+    <div class="categories">
+      <h3>Categories</h3>
+      <hr />
+      {{#each categories}}
+        <a
+          href="/categories/{{_id}}/ideas"
+          class="badge rounded-pill bg-primary text-decoration-none"
+        >{{category}}</a>
+      {{/each}}
     </div>
-  {{/each}}
-
-{{else if categoryRef}}
-
-  <h2 class="text-muted mb-3">All Ideas by {{categoryName}} </h2>
-  {{#each ideas}}
-    <div class="card mb-1">
-      {{! <img src="..." class="card-img-top" alt="..." /> }}
-      <div class="card-body">
-        <h5 class="card-title">{{title}}</h5>
-        <div class="card-text">{{{truncateText description 300}}} </div>
-        <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
-      </div>
+    <div class="tags mt-4">
+      <h3>Tags</h3>
+      <hr />
+      <a
+        href="/"
+        class="badge rounded-pill bg-primary text-decoration-none"
+      >Primary</a>
     </div>
-  {{/each}}
-
-{{else}}
-
-  {{#each ideas}}
-    <div class="card mb-1">
-      {{! <img src="..." class="card-img-top" alt="..." /> }}
-      <div class="card-body">
-        <h5 class="card-title">{{title}}</h5>
-        <div class="card-text">{{{truncateText description 300}}} </div>
-        <a href="/ideas/{{_id}}" class="btn btn-primary">Read more</a>
-      </div>
-    </div>
-  {{/each}}
-
-{{/if}}
+  </div>
+</div>

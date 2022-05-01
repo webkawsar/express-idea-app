@@ -16,12 +16,29 @@ const deleteFilePromise = util.promisify(fs.unlink);
 
 // Get All Ideas
 exports.getAll = async (req, res) => {
-    const ideas = await Idea.find({ status: 'public' });
-    const generateIdea = ideas.map((idea) => generateIdeaDoc(idea));
+    const page = +req.query.page || 1;
+    const itemPerPage = 2;
+    const totalPublicIdeasCount = await Idea.find({ status: 'public' }).countDocuments();
+    const publicIdeas = await Idea.find({ status: 'public' })
+        .skip((page - 1) * itemPerPage)
+        .sort({ createdAt: -1 })
+        .limit(itemPerPage);
+    const generateIdea = publicIdeas.map((idea) => generateIdeaDoc(idea));
+
+    // Categories
+    const allCategories = await Category.find();
+    const categories = allCategories.map((category) => generateCategoryDoc(category));
 
     res.render('ideas/index', {
         title: 'All Ideas',
         ideas: generateIdea,
+        categories,
+        currentPage: page,
+        previousPage: page - 1,
+        nextPage: page + 1,
+        hasPreviousPage: page > 1,
+        hasNextPage: page * itemPerPage < totalPublicIdeasCount,
+        lastPage: Math.ceil(totalPublicIdeasCount / itemPerPage),
     });
 };
 

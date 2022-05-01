@@ -25,6 +25,8 @@ const incrementedIndex = (indexNum) => {
     return index;
 };
 
+const comparePagination = (value1, value2) => value1 !== value2;
+
 module.exports = {
     compareValues,
     truncateText,
@@ -33,4 +35,5 @@ module.exports = {
     formatDate,
     comparePath,
     incrementedIndex,
+    comparePagination,
 };

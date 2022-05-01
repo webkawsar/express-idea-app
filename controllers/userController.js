@@ -6,6 +6,8 @@ const util = require('util');
 const User = require('../models/User');
 const generateUserDoc = require('../helpers/generateUserDoc');
 const generateIdeaDoc = require('../helpers/generateIdeaDoc');
+const Category = require('../models/Category');
+const generateCategoryDoc = require('../helpers/generateCategoryDoc');
 
 const deleteFilePromise = util.promisify(fs.unlink);
 
@@ -97,7 +99,14 @@ exports.update = async (req, res) => {
 exports.getIdeas = async (req, res) => {
     const { id } = req.params;
 
-    const user = await User.findById(id).populate('ideas');
+    const user = await User.findById(id).populate({
+        path: 'ideas',
+        options: {
+            sort: {
+                createdAt: -1,
+            },
+        },
+    });
     if (!user) return res.status(404).render('notFound', { title: 'Not Found' });
 
     const generateIdeas = [];
@@ -107,11 +116,29 @@ exports.getIdeas = async (req, res) => {
         }
     });
 
+    // Categories
+    const allCategories = await Category.find();
+    const categories = allCategories.map((category) => generateCategoryDoc(category));
+
+    // Pagination
+    const page = +req.query.page || 1;
+    const itemPerPage = 2;
+    const totalPublicIdeasCount = generateIdeas.length;
+    const publicIdeas = generateIdeas.splice((page - 1) * itemPerPage, itemPerPage);
+
     res.render('ideas/index', {
         title: `All Ideas by ${user.firstName}`,
-        ideas: generateIdeas,
+        ideas: publicIdeas,
         userRef: true,
+        categories,
         firstName: user.firstName,
+        userId: id,
+        currentPage: page,
+        previousPage: page - 1,
+        nextPage: page + 1,
+        hasPreviousPage: page > 1,
+        hasNextPage: page * itemPerPage < totalPublicIdeasCount,
+        lastPage: Math.ceil(totalPublicIdeasCount / itemPerPage),
     });
 };
 

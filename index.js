@@ -8,6 +8,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const flash = require('connect-flash');
 require('express-async-errors');
+const csrf = require('csurf');
 
 const {
     compareValues,
@@ -17,6 +18,7 @@ const {
     formatDate,
     comparePath,
     incrementedIndex,
+    comparePagination,
 } = require('./helpers');
 
 // config
@@ -53,6 +55,7 @@ app.engine(
             formatDate,
             comparePath,
             incrementedIndex,
+            comparePagination,
         },
     })
 );
@@ -74,12 +77,15 @@ app.use(
 );
 app.use(flash());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(csrf());
 app.use(passport.initialize());
 app.use(passport.session());
 localStrategy(passport);
 googleStrategy(passport);
 
 app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
     res.locals.loggedInUser = req?.user ? req.user : null;
     res.locals.isAdmin = req?.user?.role === 1;
     res.locals.firstName = req?.user ? req.user.firstName : null;
@@ -93,8 +99,6 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
-app.use(express.urlencoded({ extended: false }));
-
 // auth
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
