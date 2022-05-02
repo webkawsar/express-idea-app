@@ -1,7 +1,24 @@
 const express = require('express');
 const passport = require('passport');
+const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
+
+const registerLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 1,
+    message: 'Too many accounts created from this IP, please try again after 1 hour',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const loginLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 5,
+    message: 'Too many login attempts, please try again after 1 hour',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 // Controllers
 const authController = require('../controllers/authController');
@@ -21,7 +38,11 @@ const isGuest = require('../middleware/isGuest');
 
 // routes
 router.get('/register', isGuest, authController.new);
-router.post('/register', registerValidator, registerValidationResult, authController.create);
+router.post(
+    '/register',
+    [registerValidator, registerValidationResult, registerLimiter],
+    authController.create
+);
 
 // account activation
 router.get('/activate/:token', authController.activate);
@@ -30,8 +51,7 @@ router.get('/activate/:token', authController.activate);
 router.get('/login', isGuest, authController.loginForm);
 router.post(
     '/login',
-    loginValidator,
-    loginValidationResult,
+    [loginValidator, loginValidationResult, loginLimiter],
     passport.authenticate('local', {
         failureRedirect: '/auth/login',
         failureFlash: true,

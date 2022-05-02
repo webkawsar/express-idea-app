@@ -73,6 +73,7 @@ const googleStrategy = (passport) => {
                             lastName: profile.name.familyName,
                             email: profile.emails[0].value,
                             imageURL: profile.photos[0].value,
+                            isVerified: true,
                         };
                         const user = new User(profileToSave);
                         await user.save({ validateBeforeSave: false });

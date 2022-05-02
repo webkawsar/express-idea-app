@@ -37,7 +37,7 @@
                         <td>{{status}}</td>
                         <td><a href="/ideas/{{_id}}/edit"><i class="fa-solid fa-pen"></i></a></td>
                         <td>
-                            <form action="/ideas/{{_id}}?_method=DELETE" method="POST">
+                            <form action="/ideas/{{_id}}?_method=DELETE&_csrf={{csrfToken}}" method="POST">
                                 <button class="btn"><i class="fa-solid fa-trash"></i></button>
                             </form>
                         </td>

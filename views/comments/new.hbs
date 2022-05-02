@@ -25,6 +25,8 @@
       </textarea>
 
       <a href="/ideas/{{idea._id}}" class="btn btn-info mt-4"><i class="fa-solid fa-arrow-left-long"></i> Back to idea</a>
+
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <button type="submit" class="btn btn-primary mt-4">Add a comment</button>
     </div>
   </div>

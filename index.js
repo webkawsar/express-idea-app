@@ -9,6 +9,8 @@ const passport = require('passport');
 const flash = require('connect-flash');
 require('express-async-errors');
 const csrf = require('csurf');
+// const helmet = require('helmet');
+const compression = require('compression');
 
 const {
     compareValues,
@@ -41,6 +43,18 @@ connectDB();
 
 // App object
 const app = express();
+const sessionOptions = {
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: URL }),
+    name: 'ideaApp',
+    cookie: {
+        maxAge: 2 * 60 * 100 * 1000,
+        httpOnly: true,
+        sameSite: 'lax',
+    },
+}
 
 // app.engine('handlebars', exphbs);
 app.engine(
@@ -62,33 +76,30 @@ app.engine(
 app.set('view engine', '.hbs');
 // Middleware
 
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-        store: MongoStore.create({ mongoUrl: URL }),
-        cookie: {
-            maxAge: 2 * 60 * 100 * 1000,
-            httpOnly: true,
-            sameSite: 'lax',
-        },
-    })
-);
-app.use(flash());
+// change session option based on environment
+if(app.get('env') === 'production'){
+    sessionOptions.proxy = true
+    sessionOptions.cookie.secure = true
+}
+app.use(session(sessionOptions));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(csrf());
+// app.use(helmet());
+app.use(compression());
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 localStrategy(passport);
 googleStrategy(passport);
 
 app.use((req, res, next) => {
-    res.locals.csrfToken = req.csrfToken();
     res.locals.loggedInUser = req?.user ? req.user : null;
     res.locals.isAdmin = req?.user?.role === 1;
     res.locals.firstName = req?.user ? req.user.firstName : null;
+    res.locals.csrfToken = req.csrfToken();
     // eslint-disable-next-line no-underscore-dangle
     res.locals.loggedInUserId = req?.user ? req.user._id : null;
     res.locals.success_msg = req.flash('success_msg');
@@ -97,8 +108,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(methodOverride('_method'));
 // auth
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
@@ -111,6 +120,7 @@ app.use('/', indexRoutes);
 app.use(errorMiddleware);
 
 // Server listening
-app.listen(8080, () => {
-    console.log('Server is listening on: 8080');
+const port = process.env.PORT || 8080
+app.listen(port, () => {
+    console.log(`Server is listening on port: ${port}`);
 });

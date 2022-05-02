@@ -6,8 +6,10 @@
         <div class="card" style="width: 25rem;">
             {{#if user.imageURL}}
                 <img src="{{user.imageURL}}" style="height: 300px" class="card-img-top" alt="{{user.firstName}}">
-            {{else}}
+            {{else if user.image}}
                 <img style="height: 300px;" src="/uploads/users/{{user.image}}" class="card-img-top" alt="{{user.firstName}}">
+            {{else}}
+                <img style="height: 300px;" src="/uploads/users/default.png" class="card-img-top" alt="{{user.firstName}}">
             {{/if}}
 
             <ul class="list-group list-group-flush">
@@ -22,7 +24,7 @@
                 <div class="d-flex justify-content-between mt-4">
                     <a href="/users/me/edit" class="btn btn-primary">Edit profile</a>
                     
-                    <form style="margin: 0;" action="/users/me?_method=DELETE" method="POST">
+                    <form style="margin: 0;" action="/users/me?_method=DELETE&_csrf={{csrfToken}}" method="POST">
                         <button type="submit" class="btn btn-danger">Delete Account</button>
                     </form>
                 </div>

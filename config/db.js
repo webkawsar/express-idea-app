@@ -1,10 +1,18 @@
 const mongoose = require('mongoose');
 
-const URL = process.env.LOCAL_DB;
+let URL = ''
+if(process.env.NODE_ENV ==='development'){
+    URL = process.env.LOCAL_DB;
+}else {
+    URL = process.env.CLOUD_DB;
+}
+
 const connectDB = async () => {
     try {
         await mongoose.connect(URL);
-        console.log('Database is connected');
+
+        const typeofDB = process.env.NODE_ENV ==='development' ? 'localDB' : 'cloudDB'
+        console.log(`Database is connected on ${typeofDB}`);
     } catch (error) {
         console.log(`Database connection error: ${error.message}`);
     }

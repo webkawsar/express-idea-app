@@ -3,6 +3,20 @@ const categoryForm = document.querySelector('#categoryForm');
 const categoryInput = document.querySelector('#category');
 const msg = document.querySelector('.msg');
 const catList = document.querySelector('#catList');
+// Read the CSRF token from the <meta> tag
+const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+const showMessage = (res) => {
+    if (res.success) {
+        msg.innerHTML = `<div class="alert alert-success" role="alert">
+                    ${res.message}
+                </div>`;
+    } else {
+        msg.innerHTML = `<div class="alert alert-danger" role="alert">
+                    ${res.message}
+                </div>`;
+    }
+};
 
 // eslint-disable-next-line consistent-return
 const addCategory = async (data) => {
@@ -11,6 +25,7 @@ const addCategory = async (data) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'Application/json',
+                'CSRF-Token': token,
             },
             body: JSON.stringify(data),
         });
@@ -65,7 +80,10 @@ if (categoryForm) {
                 categoryInput.value = '';
             }
         } catch (error) {
-            console.log(error);
+            showMessage({
+                success: false,
+                message: 'Internal Server Error',
+            });
         }
     });
 }
@@ -73,6 +91,9 @@ if (categoryForm) {
 const deleteCategory = async (name) => {
     const response = await fetch(`/categories/${name}`, {
         method: 'DELETE',
+        headers: {
+            'CSRF-Token': token, // <-- is the csrf token as a header
+        },
     });
 
     return response.json();
@@ -94,7 +115,10 @@ if (catList) {
                                 </div>`;
                 }
             } catch (error) {
-                console.log(error);
+                showMessage({
+                    success: false,
+                    message: 'Internal Server Error',
+                });
             }
         }
     });
@@ -110,18 +134,6 @@ const commentCount = document.querySelector('.comment-count');
 const likeComment = document.querySelector('.like-comment');
 const ideaId = likeComment?.dataset?.idea;
 
-const showMessage = (res) => {
-    if (res.success) {
-        msg.innerHTML = `<div class="alert alert-success" role="alert">
-                    ${res.message}
-                </div>`;
-    } else {
-        msg.innerHTML = `<div class="alert alert-danger" role="alert">
-                    ${res.message}
-                </div>`;
-    }
-};
-
 // eslint-disable-next-line consistent-return
 const toggleLike = async (id) => {
     try {
@@ -129,6 +141,7 @@ const toggleLike = async (id) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'Application/json',
+                'CSRF-Token': token,
             },
         });
 
