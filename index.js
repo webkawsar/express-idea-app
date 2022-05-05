@@ -54,7 +54,7 @@ const sessionOptions = {
         httpOnly: true,
         sameSite: 'lax',
     },
-}
+};
 
 // app.engine('handlebars', exphbs);
 app.engine(
@@ -77,9 +77,9 @@ app.set('view engine', '.hbs');
 // Middleware
 
 // change session option based on environment
-if(app.get('env') === 'production'){
-    sessionOptions.proxy = true
-    sessionOptions.cookie.secure = true
+if (app.get('env') === 'production') {
+    sessionOptions.proxy = true;
+    sessionOptions.cookie.secure = true;
 }
 app.use(session(sessionOptions));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -120,7 +120,7 @@ app.use('/', indexRoutes);
 app.use(errorMiddleware);
 
 // Server listening
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Server is listening on port: ${port}`);
 });
