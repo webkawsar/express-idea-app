@@ -9,7 +9,6 @@ const passport = require('passport');
 const flash = require('connect-flash');
 require('express-async-errors');
 const csrf = require('csurf');
-
 // const helmet = require('helmet');
 const compression = require('compression');
 
