@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Kawsar Ahmed",
   "license": "MIT",
+  "engines": {
+    "node": "16.x"
+  },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "eslint": "8.2.0",
