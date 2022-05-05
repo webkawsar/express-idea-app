@@ -9,6 +9,7 @@ const passport = require('passport');
 const flash = require('connect-flash');
 require('express-async-errors');
 const csrf = require('csurf');
+
 // const helmet = require('helmet');
 const compression = require('compression');
 
@@ -25,6 +26,7 @@ const {
 
 // config
 const { connectDB, URL } = require('./config/db');
+
 // routes
 const ideasRoutes = require('./routes/idea');
 const indexRoutes = require('./routes/index');
@@ -87,6 +89,7 @@ app.use(methodOverride('_method'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(csrf());
+
 // app.use(helmet());
 app.use(compression());
 app.use(flash());
