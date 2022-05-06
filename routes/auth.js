@@ -53,7 +53,7 @@ router.post(
     '/login',
     [loginValidator, loginValidationResult, loginLimiter],
     passport.authenticate('local', {
-        failureRedirect: '/auth/login',
+        failureRedirect: `${process.env.HOST_ADDRESS}/auth/login`,
         failureFlash: true,
     }),
     authController.login
@@ -64,7 +64,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get(
     '/google/callback',
     passport.authenticate('google', {
-        failureRedirect: '/auth/login',
+        failureRedirect: `${process.env.HOST_ADDRESS}/auth/login`,
         failureFlash: true,
     }),
     authController.login
