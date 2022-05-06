@@ -6,10 +6,8 @@
    <img src="/uploads/ideas/default.jpg" class="img-fluid rounded-start" alt="Default Idea image">
   {{/if}}
   <div class="row g-0">
-    <div class="col-md-8">
-      
+    <div class="col-md-12">
       <div class="card-body">
-
         <h5 class="card-title">{{idea.title}}</h5>
         <div class="card-text mb-0">{{{idea.description}}} </div>
 
@@ -23,27 +21,9 @@
           </span>
         </div>
 
-        <div class="category mb-3">
-          <label for="category">Category: </label>
-          {{#if idea.category}}
-            <a
-              href="/categories/{{idea.category._id}}/ideas"
-              style="text-decoration: none;"
-              class="badge bg-primary"
-            >{{idea.category.categoryName}}</a>
-          {{/if}}
-        </div>
+        
 
-        <div class="tag mb-3">
-          <label for="tags">Tags: </label>
-          {{#each idea.tags}}
-            <a
-              href="/"
-              style="text-decoration: none;"
-              class="badge bg-primary"
-            >{{this}}</a>
-          {{/each}}
-        </div>
+        
 
         {{#if loggedInUser}}
           <div style="display: {{compareOwner idea.user._id loggedInUserId}}">
@@ -57,13 +37,35 @@
             </form>
           </div>
         {{/if}}
-      </div>
-    </div>
 
-    <div class="col-md-4 text-end d-flex align-items-center">
-      <div class="card-body">
-        
-        <p>Written By <a href="/users/{{idea.user._id}}/ideas"><strong>{{idea.user.firstName}}</strong></a></p>
+        <div class="row g-0">
+          <div class="col-md-6">
+            <div class="tag mb-3">
+              <label for="tags">Tags: </label>
+              {{#each idea.tags}}
+                <a
+                  href="/"
+                  style="text-decoration: none;"
+                  class="badge bg-primary"
+                >{{this}}</a>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="col-md-6 text-end">
+            <div class="category">
+                <label for="category">Category: </label>
+                {{#if idea.category}}
+                  <a
+                    href="/categories/{{idea.category._id}}/ideas"
+                    style="text-decoration: none;"
+                    class="badge bg-primary"
+                  >{{idea.category.categoryName}}</a>
+                {{/if}}
+              </div>
+              <span>Written By <a style="text-decoration: none" href="/users/{{idea.user._id}}/ideas"><strong>{{idea.user.firstName}}</strong></a></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
