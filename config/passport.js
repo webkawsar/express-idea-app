@@ -55,7 +55,11 @@ const localStrategy = (passport) => {
 const googleStrategy = (passport) => {
     passport.use(
         new GoogleStrategy(
-            { clientID, clientSecret, callbackURL: '/auth/google/callback' },
+            {
+                clientID,
+                clientSecret,
+                callbackURL: `${process.env.HOST_ADDRESS}/auth/google/callback`,
+            },
 
             async (accessToken, refreshToken, profile, next) => {
                 try {
