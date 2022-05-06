@@ -108,7 +108,7 @@ exports.forget = async (req, res) => {
     );
 
     req.forgetUser.isToken = token;
-    await req.forgetUser.save();
+    await req.forgetUser.save({ validateBeforeSave: false });
 
     await mailgun.messages().send(forgetData(req.forgetUser.email, token));
     req.flash(
