@@ -244,13 +244,17 @@
         >{{category}}</a>
       {{/each}}
     </div>
-    <div class="tags mt-4">
+    {{!-- <div class="tags mt-4">
       <h3>Tags</h3>
       <hr />
-      <a
-        href="/"
-        class="badge rounded-pill bg-primary text-decoration-none"
-      >Primary</a>
-    </div>
+
+      {{#each tags}}
+        <a
+          href="/ideas/tags/{{this}}"
+          class="badge rounded-pill bg-primary text-decoration-none"
+        >{{this}}</a>
+      {{/each}}
+
+    </div> --}}
   </div>
 </div>

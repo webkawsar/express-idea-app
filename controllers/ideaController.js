@@ -29,6 +29,8 @@ exports.getAll = async (req, res) => {
     const allCategories = await Category.find();
     const categories = allCategories.map((category) => generateCategoryDoc(category));
 
+    // tags
+
     res.render('ideas/index', {
         title: 'All Ideas',
         ideas: generateIdea,
