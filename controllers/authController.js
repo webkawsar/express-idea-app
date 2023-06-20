@@ -2,7 +2,7 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const asyncMiddleware = require('../middleware/asyncMiddleware');
-const { mailgun, registerData, forgetData } = require('../config/mailConfig');
+const { registerData, forgetData, transporter } = require('../config/mailConfig');
 
 exports.new = (req, res) => {
     res.render('auth/register', { title: 'Register for sharing your idea' });
@@ -23,7 +23,7 @@ exports.create = asyncMiddleware(async (req, res) => {
         process.env.ACCOUNT_ACTIVATION_SECRET,
         { expiresIn: '5m' }
     );
-    await mailgun.messages().send(registerData(user.email, token));
+    await transporter.sendMail(registerData(user.email, token));
 
     req.flash('success_msg', 'Please check your email and activate account');
     // redirect to dashboard
@@ -110,7 +110,7 @@ exports.forget = async (req, res) => {
     req.forgetUser.isToken = token;
     await req.forgetUser.save({ validateBeforeSave: false });
 
-    await mailgun.messages().send(forgetData(req.forgetUser.email, token));
+    await transporter.sendMail(forgetData(req.forgetUser.email, token));
     req.flash(
         'success_msg',
         'Reset password link was sent to your email.Please follow the instructions'
