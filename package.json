@@ -9,7 +9,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "start": "node index",
+    "start": "cross-env NODE_ENV=production node index",
     "dev": "cross-env NODE_ENV=development nodemon index",
     "prod": "cross-env NODE_ENV=production node index"
   },
