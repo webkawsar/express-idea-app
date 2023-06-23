@@ -7,6 +7,8 @@ if (process.env.NODE_ENV === 'development') {
     URL = process.env.CLOUD_DB;
 }
 
+mongoose.set('strictQuery', true);
+
 const connectDB = async () => {
     try {
         await mongoose.connect(URL);
